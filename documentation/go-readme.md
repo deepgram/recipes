@@ -286,7 +286,7 @@ import (
 )
 
 func main() {
-	url := "https://api.deepgram.com/v1/speak?model=aura-asteria-en"
+	url := "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en"
 	apiKey := "DEEPGRAM_API_KEY" // Replace with actual API key
 	payload := strings.NewReader(`{"text": "Hello, how can I help you today?"}`)
 

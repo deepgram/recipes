@@ -10,7 +10,7 @@ headers = {
 
 conn = http.client.HTTPSConnection(url)
 
-conn.request("POST", "/v1/speak?model=aura-asteria-en", request_body, headers)
+conn.request("POST", "/v1/speak?model=aura-2-thalia-en", request_body, headers)
 
 response = conn.getresponse()
 

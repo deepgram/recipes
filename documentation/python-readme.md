@@ -310,7 +310,7 @@ print(data.decode("utf-8"))
 ```python
 import requests
 
-url = "https://api.deepgram.com/v1/speak?model=aura-asteria-en"
+url = "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en"
 headers = {
     "Authorization": "Token DEEPGRAM_API_KEY", # Replace with your Deepgram API key
     "Content-Type": "application/json"
@@ -353,7 +353,7 @@ headers = {
 
 conn = http.client.HTTPSConnection(url)
 
-conn.request("POST", "/v1/speak?model=aura-asteria-en", request_body, headers)
+conn.request("POST", "/v1/speak?model=aura-2-thalia-en", request_body, headers)
 
 response = conn.getresponse()
 

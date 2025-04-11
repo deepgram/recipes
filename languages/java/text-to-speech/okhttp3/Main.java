@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         String apiKey = "DEEPGRAM_API_KEY"; // Replace DEEPGRAM_API_KEY with your actual API key
-        String url = "https://api.deepgram.com/v1/speak?model=aura-asteria-en";
+        String url = "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en";
         String text = "{\"text\": \"Hello, how can I help you today?\"}";
         String outputFile = "your_output_file.mp3";
 

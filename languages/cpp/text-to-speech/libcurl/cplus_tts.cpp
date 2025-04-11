@@ -7,7 +7,7 @@ int main() {
 
     curl = curl_easy_init();
     if(curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://api.deepgram.com/v1/speak?model=aura-asteria-en");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en");
 
         struct curl_slist *headers = NULL;
         headers = curl_slist_append(headers, "Authorization: Token DEEPGRAM_API_KEY"); // Replace YOUR_DEEPGRAM_API_KEY with your actual API key
@@ -15,7 +15,7 @@ int main() {
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"text\": \"Hello, how can I help you today?\"}");
-        
+
         FILE *fp = fopen("your_output_file.mp3", "wb");
         if (fp == NULL) {
             std::cerr << "Failed to create output file." << std::endl;
@@ -23,7 +23,7 @@ int main() {
         }
 
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        
+
         res = curl_easy_perform(curl);
 
         curl_slist_free_all(headers);

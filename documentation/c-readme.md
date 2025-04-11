@@ -158,7 +158,7 @@ int main(void) {
         headers = curl_slist_append(headers, "Content-Type: application/json");
 
         // Set the request URL and add model choice
-        curl_easy_setopt(curl, CURLOPT_URL, "https://api.deepgram.com/v1/speak?model=aura-asteria-en");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
         // Set the request data

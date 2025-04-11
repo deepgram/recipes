@@ -1,7 +1,7 @@
 <?php
 
 // Set the API endpoint URL
-$url = "https://api.deepgram.com/v1/speak?model=aura-asteria-en";
+$url = "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en";
 
 // Set your Deepgram API key
 $api_key = "DEEPGRAM_API_KEY";

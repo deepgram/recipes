@@ -1,7 +1,7 @@
 import fs from "fs";
 import fetch from "node-fetch";
 
-const url = "https://api.deepgram.com/v1/speak?model=aura-asteria-en";
+const url = "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en";
 const apiKey = "DEEPGRAM_API_KEY"; // Replace with your Deepgram API key
 const outputFilePath = "output_file.mp3";
 

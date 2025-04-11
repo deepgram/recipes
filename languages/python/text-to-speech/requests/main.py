@@ -1,6 +1,6 @@
 import requests
 
-url = "https://api.deepgram.com/v1/speak?model=aura-asteria-en"
+url = "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en"
 headers = {
     "Authorization": "Token DEEPGRAM_API_KEY", # Replace with your Deepgram API key
     "Content-Type": "application/json"

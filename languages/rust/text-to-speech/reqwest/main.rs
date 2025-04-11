@@ -10,7 +10,7 @@ struct RequestBody {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_key = "DEEPGRAM_API_KEY";
-    let url = "https://api.deepgram.com/v1/speak?model=aura-asteria-en";
+    let url = "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en";
     let output_file = "your_output_file.mp3";
 
     let client = Client::new();

@@ -1,7 +1,7 @@
 import Foundation
 
 // Specify the URL for the Deepgram API endpoint
-let url = URL(string: "https://api.deepgram.com/v1/speak?model=aura-asteria-en")!
+let url = URL(string: "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en")!
 
 // Replace DEEPGRAM_API_KEY with your actual API key
 let apiKey = "DEEPGRAM_API_KEY"
@@ -28,12 +28,12 @@ let task = URLSession.shared.dataTask(with: request) { data, response, error in
         print("Error: \(error)")
         return
     }
-    
+
     guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
         print("Error: Invalid response")
         return
     }
-    
+
     if let audioData = data {
         do {
             // Specify the path to save the output MP3 file

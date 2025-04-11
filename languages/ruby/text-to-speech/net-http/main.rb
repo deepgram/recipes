@@ -1,7 +1,7 @@
 require 'net/http'
 require 'uri'
 
-uri = URI.parse("https://api.deepgram.com/v1/speak?model=aura-asteria-en")
+uri = URI.parse("https://api.deepgram.com/v1/speak?model=aura-2-thalia-en")
 http = Net::HTTP.new(uri.host, uri.port)
 http.use_ssl = true
 
