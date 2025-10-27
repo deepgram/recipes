@@ -41,7 +41,7 @@ try:
             else:
                 msg_type = getattr(message, "type", "Unknown")
                 print(f"Received {msg_type} event")
-        
+
         connection.on(EventType.OPEN, lambda _: print("Connection opened"))
         connection.on(EventType.MESSAGE, on_message)
         connection.on(EventType.CLOSE, lambda _: print("Connection closed"))
@@ -52,7 +52,7 @@ try:
 
         # Send text to be converted to speech
         connection.send_text("Hello, this is streaming text to speech!")
-        
+
         # Send control messages
         print("Send Flush message")
         connection.send_control(SpeakV1ControlMessage(type="Flush"))
@@ -152,7 +152,7 @@ def on_message(message: SpeakV1SocketClientResponse) -> None:
         # Save to file
         with open("output.raw", "ab") as f:
             f.write(message)
-        
+
         # Or play directly
         # audio_player.play(message)
     else:

@@ -33,7 +33,7 @@ try:
         def on_message(message: ListenV1SocketClientResponse) -> None:
             msg_type = getattr(message, "type", "Unknown")
             print(f"Received {msg_type} event")
-        
+
         connection.on(EventType.OPEN, lambda _: print("Connection opened"))
         connection.on(EventType.MESSAGE, on_message)
         connection.on(EventType.CLOSE, lambda _: print("Connection closed"))

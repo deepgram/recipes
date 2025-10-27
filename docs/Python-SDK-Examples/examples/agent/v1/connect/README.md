@@ -85,7 +85,7 @@ try:
             else:
                 msg_type = getattr(message, "type", "Unknown")
                 print(f"Received {msg_type} event")
-        
+
         agent.on(EventType.OPEN, lambda _: print("Connection opened"))
         agent.on(EventType.MESSAGE, on_message)
         agent.on(EventType.CLOSE, lambda _: print("Connection closed"))
