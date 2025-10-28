@@ -1,14 +1,5 @@
-# Javascript
-languages/javascript/node_modules/
-/node/modules
-
-# Java
-target/
-
-#Csharp
-
-**/bin/
-**/obj/
-
 #env
 .env
+
+sources/
+temp/

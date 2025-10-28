@@ -1,0 +1,7 @@
+---
+description: Temp files don't get committed
+globs: /temp/**
+alwaysApply: true
+---
+
+Files inside the /temp folder are ALWAYS the cloned repositories containing our sources. They're cloned to copy our source files out, then deleted.

@@ -1,0 +1,7 @@
+---
+description: Source files don't get committed
+globs: /sources/**
+alwaysApply: true
+---
+
+Files inside the /sources folder are ALWAYS transient and WILL NOT be committed. Our tooling will generate/update examples based on what is added to that folder.
