@@ -1,18 +1,28 @@
-# Deepgram Code Recipes
+# dx-recipes
 
-A curated collection of small, runnable code examples for [Deepgram](https://deepgram.com) SDKs. Each recipe demonstrates a single feature or operation with working code, a test, and an explanation.
+Agent-maintained recipes showing how to use every Deepgram SDK feature across every supported language.
 
-> This repository is self-evolving — GitHub Actions check for SDK updates hourly and generate new recipes automatically.
+**All recipes are built and kept current by autonomous agents.** Humans can direct, override, and add recipes at any time.
 
-## Products covered
+[→ Contributing](CONTRIBUTING.md) · [→ Open PRs](../../pulls) · [→ Coverage matrix](COVERAGE.md) · [→ Request a recipe](../../issues/new/choose)
 
-| Product | API Version | Recipes |
-|---------|-------------|---------|
-| Speech-to-Text | v1 (nova-3, nova-2, nova, enhanced, base) | transcription, smart-format, paragraphs, diarize, ... |
-| Speech-to-Text | v2 (flux-general-en) | streaming, pre-recorded |
-| Text-to-Speech | v1 (aura-2 voices) | generate, stream, websocket |
-| Audio Intelligence | v1 | summarize, sentiment, topics, intents, entities |
-| Voice Agents | v1 | connect, custom-llm, custom-tts, function-calling |
+## How it works
+
+1. **Discover** — Hourly: agents scan SDK repos for new releases and compare against `samples/` to find coverage gaps, creating queue issues for missing recipes
+2. **Generate** — Agents pick up queue issues, fetch current SDK docs via Kapa, and write runnable `example.*` + `example_test.*` + `README.md` for each missing recipe, raising a PR
+3. **Test** — Language-specific CI workflows run every example against the real Deepgram API
+4. **Merge** — PRs merge once tests pass
+5. **Update** — Coverage matrix rebuilds automatically on merge
+6. **Review** — Weekly: agents check SDK release notes for new features and API changes, updating `features.json` and queuing fixes for stale recipes
+
+## Recipe structure
+
+```
+samples/{language}/{product}/{version}/{recipe}/
+  example.{ext}       # runnable, < 50 lines, reads DEEPGRAM_API_KEY from env
+  example_test.{ext}  # runs the example as a subprocess, asserts output
+  README.md           # what the feature does · params · sample output · how to run
+```
 
 ## Languages
 
@@ -24,49 +34,43 @@ A curated collection of small, runnable code examples for [Deepgram](https://dee
 | .NET | [deepgram-dotnet-sdk](https://github.com/deepgram/deepgram-dotnet-sdk) | `dotnet add package Deepgram` |
 | Java | [deepgram-java-sdk](https://github.com/deepgram/deepgram-java-sdk) | Maven: `com.deepgram.sdk` |
 | Rust | [deepgram-rust-sdk](https://github.com/deepgram/deepgram-rust-sdk) | `deepgram = "0.6"` |
-| CLI | [deepgram-cli](https://github.com/deepgram/deepgram-cli) | `brew install deepgram/tap/deepgram` |
+| CLI | [deepgram/cli](https://github.com/deepgram/cli) | `pip install deepctl` |
 
-## Recipe structure
+## Products
 
-```
-samples/{language}/{product}/{version}/{recipe}/
-  example.{ext}       # < 50 lines, runnable
-  example_test.{ext}  # runs the example, checks for output
-  README.md           # feature explanation + params + sample output
-```
+| Product | API versions | Example recipes |
+|---------|-------------|-----------------|
+| Speech-to-Text | v1 (nova-3, nova-2, nova, enhanced, base) · v2 (flux-general-en) | transcribe-url, transcribe-file, paragraphs, diarize, smart-format, utterances, summarize, sentiment, topics, intents, detect-entities, detect-language, redact, search, keywords, streaming, … |
+| Text-to-Speech | v1 (aura-2 voices) | generate-audio, stream-audio, websocket-streaming, select-model, select-encoding |
+| Audio Intelligence | v1 | summarize, sentiment, topics, intents, entities |
+| Voice Agents | v1 | connect, custom-llm, custom-tts, function-calling |
 
-## Quickstart
+## Agent schedules
+
+| Workflow | Schedule | Purpose |
+|----------|----------|---------|
+| `discover-sdks` | Every hour at :07 | Find coverage gaps → create `queue:generate` issues |
+| `process-queue` | Every hour at :27 | Pick up queue issues → generate recipes → open PRs |
+| `review-sdk-changes` | Saturdays 08:17 UTC | Check SDK release notes for new features and API changes |
+| `update-coverage` | On PR merge + every 6 h | Rebuild `COVERAGE.md` and per-language READMEs |
+| `reconcile-index` | Daily 11:45 UTC | Verify README counts; flag incomplete recipe directories |
+
+## Setup
+
+1. Add `ANTHROPIC_API_KEY` as a repository secret
+2. Add `DEEPGRAM_API_KEY` as a repository secret
+3. Add `KAPA_API_KEY` as a repository secret (used by agents to query live Deepgram docs)
+4. Set `KAPA_PROJECT_ID` as a repository variable: `1908afc6-c134-4c6f-a684-ed7d8ce91759`
+5. Run **Actions → Setup Labels → Run workflow** once to create all issue labels
+
+`GITHUB_TOKEN` is provided automatically by GitHub Actions.
+
+## Running agents locally
 
 ```bash
-export DEEPGRAM_API_KEY=your_api_key
-
-# Python — transcribe audio from URL
-cd samples/python/speech-to-text/v1/transcribe-url
-pip install -r ../../../requirements.txt
-python example.py
-
-# JavaScript — transcribe audio from URL
-cd samples/javascript/speech-to-text/v1/transcribe-url
-npm install  # from samples/javascript/
-node example.js
+# Requires: ANTHROPIC_API_KEY set, DEEPGRAM_API_KEY set, gh auth login, git configured
+claude --model claude-opus-4-6 -p "$(cat instructions/discover-sdks.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/process-queue.md)"
 ```
 
-## Coverage
-
-See [COVERAGE.md](COVERAGE.md) for the full feature coverage matrix across all languages.
-
-## How this works
-
-Every hour, a GitHub Actions workflow checks all Deepgram SDK repositories for new releases and compares them against the current sample coverage. When gaps are found, it creates queue issues that trigger example generation via a Claude Code agent.
-
-New examples are:
-1. Generated by the agent following the recipe format
-2. Submitted as a pull request
-3. Tested by language-specific CI workflows against the real Deepgram API
-4. Auto-merged when tests pass
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add examples manually or trigger generation.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [instructions/README.md](instructions/README.md) for all available instructions.
