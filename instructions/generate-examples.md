@@ -176,52 +176,55 @@ Requirements:
 - Use async where appropriate (streaming, voice agents, TTS with streaming output)
 - Keep it simple and readable — this is a teaching example
 
-**Python (`example.py`):**
+**Python (`example.py`) — SDK v6+ API:**
+
+`DeepgramClient()` with no args reads `DEEPGRAM_API_KEY` from the environment automatically.
+Options are passed as keyword arguments directly to the method — no `PrerecordedOptions` class.
+
 ```python
-import os
-from deepgram import DeepgramClient, PrerecordedOptions
+from deepgram import DeepgramClient
 
-client = DeepgramClient(os.environ["DEEPGRAM_API_KEY"])
+AUDIO_URL = "https://dpgr.am/spacewalk.wav"
 
-options = PrerecordedOptions(
+client = DeepgramClient()  # reads DEEPGRAM_API_KEY from environment
+
+response = client.listen.v1.media.transcribe_url(
+    url=AUDIO_URL,
     model="nova-3",
-    # feature-specific parameters go here
+    smart_format=True,
+    # feature-specific parameters go here (diarize=True, paragraphs=True, etc.)
 )
 
-response = client.listen.rest.v("1").transcribe_url(
-    {"url": "https://dpgr.am/spacewalk.wav"},
-    options,
-)
-
-print(response.results.channels[0].alternatives[0].transcript)
+if response.results and response.results.channels:
+    print(response.results.channels[0].alternatives[0].transcript)
 ```
 
-For TTS examples, use the speak API:
+For TTS examples, use the speak API (generate returns an Iterator[bytes]):
 ```python
 import os
-from deepgram import DeepgramClient, SpeakOptions
+from deepgram import DeepgramClient
 
-client = DeepgramClient(os.environ["DEEPGRAM_API_KEY"])
+client = DeepgramClient()  # reads DEEPGRAM_API_KEY from environment
 
-options = SpeakOptions(model="aura-2-thalia-en")
-
-response = client.speak.rest.v("1").save(
-    "output.mp3",
-    {"text": "Hello from Deepgram!"},
-    options,
+audio_chunks = client.speak.v1.audio.generate(
+    text="Hello from Deepgram!",
+    model="aura-2-thalia-en",
 )
 
-print(f"Audio saved: {response.filename} ({response.content_length} bytes)")
+with open("output.mp3", "wb") as f:
+    for chunk in audio_chunks:
+        f.write(chunk)
+
+print(f"Audio saved: {os.path.getsize('output.mp3')} bytes")
 ```
 
 For streaming examples, use asyncio:
 ```python
-import os
 import asyncio
-from deepgram import DeepgramClient, LiveTranscriptionEvents, LiveOptions
+from deepgram import DeepgramClient, LiveTranscriptionEvents
 
 async def main():
-    client = DeepgramClient(os.environ["DEEPGRAM_API_KEY"])
+    client = DeepgramClient()  # reads DEEPGRAM_API_KEY from environment
     connection = client.listen.asyncwebsocket.v("1")
     # ... streaming setup ...
 
