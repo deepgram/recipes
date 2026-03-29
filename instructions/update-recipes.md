@@ -37,7 +37,7 @@ Store the issue number for later.
 
 ```bash
 # Find the recipe directory
-RECIPE_DIR="samples/{recipe-path}"
+RECIPE_DIR="recipes/{recipe-path}"
 ls "$RECIPE_DIR"
 
 # Read the existing files
@@ -103,7 +103,7 @@ and checks for output. Only update it if the expected output pattern changed fun
 ## Step 6: Commit and Push
 
 ```bash
-git add "samples/{recipe-path}/"
+git add "recipes/{recipe-path}/"
 git commit -m "fix({language}): update {recipe-slug} for {sdk} {sdk-version}
 
 API change: {brief description from issue}"
@@ -130,8 +130,8 @@ Updates this recipe to use the current API from {sdk} {sdk-version}.
 
 ### Files updated
 
-- `samples/{recipe-path}/example.{ext}` — updated API call
-- `samples/{recipe-path}/README.md` — updated params table (if applicable)
+- `recipes/{recipe-path}/example.{ext}` — updated API call
+- `recipes/{recipe-path}/README.md` — updated params table (if applicable)
 
 ### Closes
 

@@ -20,7 +20,7 @@ body:
     id: recipe
     attributes:
       label: Recipe Path
-      description: Path relative to samples/ (e.g. python/speech-to-text/v1/transcribe-url)
+      description: Path relative to recipes/ (e.g. python/speech-to-text/v1/transcribe-url)
       placeholder: "python/speech-to-text/v1/transcribe-url"
     validations:
       required: true

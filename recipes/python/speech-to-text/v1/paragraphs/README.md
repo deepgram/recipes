@@ -37,7 +37,7 @@ Without this feature, the transcript is a single continuous string with no struc
 
 - Python 3.10+
 - Set `DEEPGRAM_API_KEY` environment variable
-- Install: `pip install -r samples/python/requirements.txt`
+- Install: `pip install -r recipes/python/requirements.txt`
 
 ## Run
 

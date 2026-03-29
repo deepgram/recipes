@@ -3,7 +3,7 @@ name: Test Python Samples
 on:
   pull_request:
     paths:
-      - 'samples/python/**'
+      - 'recipes/python/**'
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
       - name: Check for examples
         id: check
         run: |
-          if find samples/python -name "example_test.py" 2>/dev/null | grep -q .; then
+          if find recipes/python -name "example_test.py" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
@@ -37,8 +37,8 @@ jobs:
         if: steps.check.outputs.has_tests == 'true'
         run: |
           pip install --upgrade pip
-          if [ -f samples/python/requirements.txt ]; then
-            pip install -r samples/python/requirements.txt
+          if [ -f recipes/python/requirements.txt ]; then
+            pip install -r recipes/python/requirements.txt
           else
             echo "No requirements.txt found, installing pytest only"
             pip install pytest pytest-timeout
@@ -46,7 +46,7 @@ jobs:
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: pytest samples/python/ -v --timeout=60 -x --import-mode=importlib
+        run: pytest recipes/python/ -v --timeout=60 -x --import-mode=importlib
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15

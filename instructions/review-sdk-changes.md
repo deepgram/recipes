@@ -136,12 +136,12 @@ For each finding:
 
 Build two lists:
 - `NEW_FEATURES`: list of new recipes to add to features.json (with product, version, slug, params)
-- `STALE_RECIPES`: list of existing recipe paths in `samples/` that use deprecated patterns
+- `STALE_RECIPES`: list of existing recipe paths in `recipes/` that use deprecated patterns
 
 To find stale recipes, grep for deprecated patterns:
 ```bash
 # Example: if old method was client.listen.prerecorded.transcribeUrl (old JS API)
-grep -r "deprecated_pattern" samples/ --include="example.*" -l
+grep -r "deprecated_pattern" recipes/ --include="example.*" -l
 ```
 
 ---
@@ -242,7 +242,7 @@ The feature has been added to \`.deepgram/features.json\`.
 
 Missing paths to create:
 $(for lang in python javascript go dotnet java rust cli; do
-    echo "- samples/$lang/{product}/{version}/{slug}/"
+    echo "- recipes/$lang/{product}/{version}/{slug}/"
   done)
 EOF
 )"
@@ -282,7 +282,7 @@ reason: api-change
 
 ## Recipe Needs Updating
 
-**Recipe:** \`samples/{recipe-path}/\`
+**Recipe:** \`recipes/{recipe-path}/\`
 **SDK:** {repo}
 **Release:** {tag} ({date})
 
@@ -302,8 +302,8 @@ reason: api-change
 
 ## Files to Update
 
-- \`samples/{recipe-path}/example.{ext}\`
-- \`samples/{recipe-path}/README.md\` (update params table if needed)
+- \`recipes/{recipe-path}/example.{ext}\`
+- \`recipes/{recipe-path}/README.md\` (update params table if needed)
 EOF
 )"
 fi

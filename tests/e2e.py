@@ -7,7 +7,7 @@ Verifies:
   3. The TTS API returns audio bytes
 
 This is intentionally minimal — one call per product, fast, no exotic options.
-It is NOT a recipe test. Recipe tests live in samples/{language}/.
+It is NOT a recipe test. Recipe tests live in recipes/{language}/.
 """
 
 from deepgram import DeepgramClient

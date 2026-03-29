@@ -9,10 +9,10 @@ automatically via a GitHub Actions workflow or manually from your local machine.
 
 | File | Triggered By | What It Does |
 |------|-------------|--------------|
-| `discover-sdks.md` | Every hour at :07 | Scans `samples/` for coverage gaps and creates `queue:generate` issues for missing recipes. Also detects new Deepgram SDK repos not yet tracked. |
+| `discover-sdks.md` | Every hour at :07 | Scans `recipes/` for coverage gaps and creates `queue:generate` issues for missing recipes. Also detects new Deepgram SDK repos not yet tracked. |
 | `process-queue.md` | Every hour at :27, on issue events | Routes open `type:queue` issues. Executes `generate-examples.md` for `action:generate` issues; surfaces `action:new-sdk` issues for human review. |
 | `generate-examples.md` | Triggered by queue issues | Generates runnable recipe files (`example.*`, `example_test.*`, `README.md`) for a language/product combination. Opens a PR and closes the queue issue. |
-| `update-coverage.md` | On PR merge to main | Rebuilds `COVERAGE.md` and per-language/per-product README files to reflect the current state of `samples/`. |
+| `update-coverage.md` | On PR merge to main | Rebuilds `COVERAGE.md` and per-language/per-product README files to reflect the current state of `recipes/`. |
 | `reconcile-index.md` | Daily at 11:45 UTC | Verifies the root `README.md` count table is accurate. Creates `queue:fix` issues for sample directories missing required files. |
 
 ## How to Run Locally

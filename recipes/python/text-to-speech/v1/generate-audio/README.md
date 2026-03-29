@@ -32,7 +32,7 @@ Saved output.mp3: 48320 bytes (audio/mpeg)
 
 - Python 3.10+
 - Set `DEEPGRAM_API_KEY` environment variable
-- Install: `pip install -r samples/python/requirements.txt`
+- Install: `pip install -r recipes/python/requirements.txt`
 
 ## Run
 

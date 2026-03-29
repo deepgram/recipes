@@ -1,7 +1,7 @@
 # Instruction: Discover SDKs and Queue Missing Recipes
 
 You are an autonomous agent maintaining a Deepgram code samples repository. Your job is to find
-coverage gaps in `samples/` and create GitHub Issues to queue generation of missing recipes.
+coverage gaps in `recipes/` and create GitHub Issues to queue generation of missing recipes.
 You must also detect new Deepgram SDK repositories that are not yet tracked.
 
 Work from the repository root. Be methodical, idempotent, and safe — never commit to main,
@@ -20,7 +20,7 @@ cat .deepgram/features.json
 
 Parse `sdks.json` to get the list of tracked SDKs. Each entry has at minimum:
 - `language` — the language slug (e.g., `python`, `javascript`, `go`)
-- `slug` — the directory name under `samples/` (usually same as language)
+- `slug` — the directory name under `recipes/` (usually same as language)
 - `repo` — the GitHub repo in `owner/name` format (e.g., `deepgram/deepgram-python-sdk`)
 
 Parse `features.json` to get ALL expected recipe paths. Each entry is a relative path like
@@ -49,8 +49,8 @@ Store this as `latest_tag` for later use.
 For each SDK, find all recipe paths that already have an example file:
 
 ```bash
-find "samples/{slug}/" -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | \
-  sed "s|samples/{slug}/||" | sed "s|/example.*||" | sort
+find "recipes/{slug}/" -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | \
+  sed "s|recipes/{slug}/||" | sed "s|/example.*||" | sort
 ```
 
 Replace `{slug}` with the SDK's slug value.
@@ -182,7 +182,7 @@ This requires human review before the SDK can be added to the tracking system:
 
 1. Verify this is an official Deepgram SDK (not a fork, demo, or archived repo)
 2. Add an entry to `.deepgram/sdks.json` with the correct `language`, `slug`, and `repo` fields
-3. Create a `samples/{language}/` directory with an appropriate manifest file
+3. Create a `recipes/{language}/` directory with an appropriate manifest file
 4. Manually add a `test-{language}.yml` workflow by copying an existing one and adapting it
    NOTE: Workflow files CANNOT be created by agents — GITHUB_TOKEN lacks the `workflows`
    scope, and even if bypassed, workflow changes don't trigger CI until after they are merged.
@@ -230,7 +230,7 @@ Errors/warnings: {list or "none"}
 - NEVER commit directly to main or any branch.
 - NEVER create duplicate queue issues — always check with `gh issue list` first.
 - NEVER modify `.deepgram/sdks.json` or `.deepgram/features.json` — these require human review.
-- NEVER modify any file in `samples/` — this instruction is read-only for source files.
+- NEVER modify any file in `recipes/` — this instruction is read-only for source files.
 - If any single SDK check fails with an error, log a warning and continue to the next SDK.
   Do not abort the entire run because one SDK API call failed.
 - If `gh` commands fail due to rate limiting, wait 10 seconds and retry once.

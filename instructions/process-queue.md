@@ -103,7 +103,7 @@ To onboard this SDK:
      "repo": "{full_repo_name}",
      "manifest": "{appropriate manifest filename}"
    }
-4. Create the samples/{language}/ directory with an appropriate manifest file
+4. Create the recipes/{language}/ directory with an appropriate manifest file
 5. Manually create a `test-{language}.yml` workflow — this CANNOT be done by an agent.
    Workflow files require the `workflows` GitHub token scope, which is not available to
    automated runs. The workflow also will not take effect until it is merged into main.

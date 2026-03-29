@@ -3,7 +3,7 @@ name: Test CLI Samples
 on:
   pull_request:
     paths:
-      - 'samples/cli/**'
+      - 'recipes/cli/**'
   schedule:
     - cron: '0 12 * * *'
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
       - name: Check for examples
         id: check
         run: |
-          if find samples/cli -name "example_test.sh" 2>/dev/null | grep -q .; then
+          if find recipes/cli -name "example_test.sh" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
@@ -39,7 +39,7 @@ jobs:
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
         run: |
-          find samples/cli -name "example_test.sh" | sort | while read test_file; do
+          find recipes/cli -name "example_test.sh" | sort | while read test_file; do
             echo "Running: $test_file"
             bash "$test_file"
           done

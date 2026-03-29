@@ -7,7 +7,7 @@ Code samples for the [Deepgram .NET SDK](https://github.com/deepgram/deepgram-do
 Each recipe is a standalone .NET console application:
 
 ```
-samples/dotnet/{product}/v1/{recipe}/
+recipes/dotnet/{product}/v1/{recipe}/
   Program.cs          # The runnable example
   {Recipe}.csproj     # Project file with Deepgram SDK dependency
   ExampleTest.cs      # Test class
@@ -22,13 +22,13 @@ samples/dotnet/{product}/v1/{recipe}/
 ## Run any example
 
 ```bash
-cd samples/dotnet/{product}/v1/{recipe}
+cd recipes/dotnet/{product}/v1/{recipe}
 dotnet run
 ```
 
 ## Run all tests
 
 ```bash
-cd samples/dotnet
+cd recipes/dotnet
 dotnet test
 ```

@@ -8,7 +8,7 @@ Agent-maintained recipes showing how to use every Deepgram SDK feature across ev
 
 ## How it works
 
-1. **Discover** — Hourly: agents scan SDK repos for new releases and compare against `samples/` to find coverage gaps, creating queue issues for missing recipes
+1. **Discover** — Hourly: agents scan SDK repos for new releases and compare against `recipes/` to find coverage gaps, creating queue issues for missing recipes
 2. **Generate** — Agents pick up queue issues, fetch current SDK docs via Kapa, and write runnable `example.*` + `example_test.*` + `README.md` for each missing recipe, raising a PR
 3. **Test** — Language-specific CI workflows run every example against the real Deepgram API
 4. **Merge** — PRs merge once tests pass
@@ -18,7 +18,7 @@ Agent-maintained recipes showing how to use every Deepgram SDK feature across ev
 ## Recipe structure
 
 ```
-samples/{language}/{product}/{version}/{recipe}/
+recipes/{language}/{product}/{version}/{recipe}/
   example.{ext}       # runnable, < 50 lines, reads DEEPGRAM_API_KEY from env
   example_test.{ext}  # runs the example as a subprocess, asserts output
   README.md           # what the feature does · params · sample output · how to run

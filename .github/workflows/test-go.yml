@@ -3,7 +3,7 @@ name: Test Go Samples
 on:
   pull_request:
     paths:
-      - 'samples/go/**'
+      - 'recipes/go/**'
   schedule:
     - cron: '0 8 * * *'
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
       - name: Check for examples
         id: check
         run: |
-          if find samples/go -name "example_test.go" 2>/dev/null | grep -q .; then
+          if find recipes/go -name "example_test.go" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
@@ -35,11 +35,11 @@ jobs:
 
       - name: Install dependencies
         if: steps.check.outputs.has_tests == 'true'
-        run: cd samples/go && go mod download
+        run: cd recipes/go && go mod download
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: cd samples/go && go test ./... -v -timeout 120s
+        run: cd recipes/go && go test ./... -v -timeout 120s
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15

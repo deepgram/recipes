@@ -13,7 +13,7 @@ To trigger generation manually:
 To add a recipe manually, create a directory following this structure:
 
 ```
-samples/{language}/{product}/{version}/{recipe-slug}/
+recipes/{language}/{product}/{version}/{recipe-slug}/
   example.{ext}          # Runnable example
   example_test.{ext}     # Test
   README.md              # Explanation
@@ -79,7 +79,7 @@ samples/{language}/{product}/{version}/{recipe-slug}/
 
 If Deepgram publishes a new SDK:
 1. Add an entry to `.deepgram/sdks.json`
-2. Create `samples/{language}/` with appropriate manifest file (requirements.txt, package.json, etc.)
+2. Create `recipes/{language}/` with appropriate manifest file (requirements.txt, package.json, etc.)
 3. Create `.github/workflows/test-{language}.yml`
 4. Trigger discovery: Actions → "Discover SDKs" → "Run workflow"
 
@@ -88,17 +88,17 @@ If Deepgram publishes a new SDK:
 ```bash
 # Python
 export DEEPGRAM_API_KEY=your_key
-cd samples/python
+cd recipes/python
 pip install -r requirements.txt
 pytest . -v --timeout=60
 
 # JavaScript
-cd samples/javascript
+cd recipes/javascript
 npm install
 npm test
 
 # Go
-cd samples/go
+cd recipes/go
 go test ./... -v
 
 # All: run the test workflow locally with act
@@ -107,7 +107,7 @@ act -j test --secret DEEPGRAM_API_KEY=your_key
 
 ## Pull requests
 
-1. Branch naming: `samples/{language}/{product}-{feature}`
+1. Branch naming: `recipes/{language}/{product}-{feature}`
 2. Commit message: `feat({language}): add {product} {version} {recipe} recipe`
 3. Tests must pass before merging
 4. COVERAGE.md is auto-updated on merge

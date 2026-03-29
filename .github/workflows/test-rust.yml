@@ -3,7 +3,7 @@ name: Test Rust Samples
 on:
   pull_request:
     paths:
-      - 'samples/rust/**'
+      - 'recipes/rust/**'
   schedule:
     - cron: '0 11 * * *'
   workflow_dispatch:
@@ -25,7 +25,7 @@ jobs:
         id: check
         run: |
           # Check for Cargo.toml files in subdirectories (each recipe is its own crate)
-          if find samples/rust -mindepth 2 -name "Cargo.toml" 2>/dev/null | grep -q .; then
+          if find recipes/rust -mindepth 2 -name "Cargo.toml" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
@@ -34,11 +34,11 @@ jobs:
 
       - name: Build
         if: steps.check.outputs.has_tests == 'true'
-        run: cd samples/rust && cargo build --workspace
+        run: cd recipes/rust && cargo build --workspace
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: cd samples/rust && cargo test --workspace -- --test-threads=1
+        run: cd recipes/rust && cargo test --workspace -- --test-threads=1
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15

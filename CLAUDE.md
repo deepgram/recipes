@@ -7,7 +7,7 @@ A recipes collection of small, runnable code examples for Deepgram SDKs. Each re
 ## Sample directory structure
 
 ```
-samples/{language}/{product}/{api-version}/{recipe-slug}/
+recipes/{language}/{product}/{api-version}/{recipe-slug}/
   example.{ext}          # Runnable example (< 50 lines)
   example_test.{ext}     # Test that runs the example
   README.md              # Feature explanation with params and output
@@ -83,7 +83,7 @@ Agents running inside GitHub Actions CANNOT create or modify files in `.github/w
 - Even if bypassed, workflow file changes do not trigger CI until after they are merged
 - New test workflows for new SDKs must be added manually by a human in a separate PR
 
-When onboarding a new SDK, create the `samples/{language}/` directory and `sdks.json` entry,
+When onboarding a new SDK, create the `recipes/{language}/` directory and `sdks.json` entry,
 then note in the queue issue that a human needs to add the test workflow.
 
 ## Never commit

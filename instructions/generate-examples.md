@@ -59,8 +59,8 @@ complete context about what the system expects.
 ## Step 3: Check Actual Existing Coverage
 
 ```bash
-find "samples/{language}/" -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | \
-  sed "s|samples/{language}/||" | sed "s|/example.*||" | sort
+find "recipes/{language}/" -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | \
+  sed "s|recipes/{language}/||" | sed "s|/example.*||" | sort
 ```
 
 Replace `{language}` with the actual language slug.
@@ -70,7 +70,7 @@ to determine what needs to be created. The issue body may be stale — trust the
 
 A recipe needs generation if:
 1. It appears in features.json for this language, AND
-2. The `samples/{language}/{path}/` directory does NOT already contain an `example.*` file
+2. The `recipes/{language}/{path}/` directory does NOT already contain an `example.*` file
 
 ---
 
@@ -180,19 +180,19 @@ All file creation and commits happen on this branch. Never touch main.
 ## Step 6: Generate Recipe Files
 
 For each missing recipe path (e.g., `speech-to-text/v1/transcribe-url-nova3`), generate
-three files inside `samples/{language}/{recipe-path}/`.
+three files inside `recipes/{language}/{recipe-path}/`.
 
 ### Before creating any file:
 
 Check if the directory already exists and has content:
 
 ```bash
-ls "samples/{language}/{recipe-path}/" 2>/dev/null
+ls "recipes/{language}/{recipe-path}/" 2>/dev/null
 ```
 
 If `example.*` already exists in this directory, skip it with a log message:
 ```
-[SKIP] samples/{language}/{recipe-path}/example.* already exists.
+[SKIP] recipes/{language}/{recipe-path}/example.* already exists.
 ```
 
 ### Understand the recipe path structure:
@@ -743,7 +743,7 @@ Fill in all placeholders with accurate values. The Recipe Name should be human-r
 After generating all files for all missing recipes:
 
 ```bash
-git add "samples/{language}/"
+git add "recipes/{language}/"
 
 git commit -m "feat({language}): add {product} {version} recipes
 
@@ -838,7 +838,7 @@ Replace `{issue_number}` with the actual issue number from Step 1.
 
 ### File Safety
 - NEVER overwrite an existing `example.*` file — skip and log a warning
-- NEVER modify files outside `samples/{language}/`
+- NEVER modify files outside `recipes/{language}/`
 - NEVER commit to the `main` branch
 - Always work on the feature branch created in Step 5
 

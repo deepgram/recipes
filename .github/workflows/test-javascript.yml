@@ -3,7 +3,7 @@ name: Test JavaScript Samples
 on:
   pull_request:
     paths:
-      - 'samples/javascript/**'
+      - 'recipes/javascript/**'
   schedule:
     - cron: '0 7 * * *'
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
       - name: Check for examples
         id: check
         run: |
-          if find samples/javascript -name "example.test.js" 2>/dev/null | grep -q .; then
+          if find recipes/javascript -name "example.test.js" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
@@ -35,11 +35,11 @@ jobs:
 
       - name: Install dependencies
         if: steps.check.outputs.has_tests == 'true'
-        run: cd samples/javascript && npm install
+        run: cd recipes/javascript && npm install
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: cd samples/javascript && npm test
+        run: cd recipes/javascript && npm test
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15

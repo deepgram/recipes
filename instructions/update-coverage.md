@@ -1,11 +1,11 @@
 # Instruction: Update Coverage Documentation
 
 You are an autonomous agent maintaining coverage documentation for the Deepgram code samples
-repository. Your job is to scan the `samples/` directory, build an accurate coverage matrix,
+repository. Your job is to scan the `recipes/` directory, build an accurate coverage matrix,
 and update `COVERAGE.md` and per-language/per-product README files to reflect the current state.
 
 This instruction is triggered on PR merge. Run it after every merge to `main` that touches
-`samples/`.
+`recipes/`.
 
 ---
 
@@ -30,13 +30,13 @@ entirely on the current filesystem state, not on what the PR contained.
 
 ---
 
-## Step 2: Scan the `samples/` Directory
+## Step 2: Scan the `recipes/` Directory
 
 Find all recipe paths that have an example file:
 
 ```bash
-find samples/ -name "example.*" ! -name "*_test*" ! -name "*.mod" | \
-  sed 's|samples/||' | sed 's|/example.*||' | sort
+find recipes/ -name "example.*" ! -name "*_test*" ! -name "*.mod" | \
+  sed 's|recipes/||' | sed 's|/example.*||' | sort
 ```
 
 This produces lines like:
@@ -51,7 +51,7 @@ Each line has the structure: `{language}/{product}/{version}/{recipe-slug}`
 Also collect the full list of languages present:
 
 ```bash
-find samples/ -mindepth 1 -maxdepth 1 -type d | sed 's|samples/||' | sort
+find recipes/ -mindepth 1 -maxdepth 1 -type d | sed 's|recipes/||' | sort
 ```
 
 ---
@@ -71,7 +71,7 @@ Use this as the source of truth for which recipes SHOULD exist.
 
 For each recipe path in features.json, check whether it exists for each language:
 
-- ✅ = `samples/{language}/{recipe-path}/example.*` exists
+- ✅ = `recipes/{language}/{recipe-path}/example.*` exists
 - ❌ = does not exist
 
 Build a matrix where:
@@ -113,13 +113,13 @@ Last updated: {current date}
 
 | Recipe | Python | JS | Go | .NET | Java | Rust | CLI |
 |--------|--------|----|----|------|------|------|-----|
-| [{recipe-slug}](samples/python/{product}/{version}/{recipe-slug}/) | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| [{recipe-slug}](recipes/python/{product}/{version}/{recipe-slug}/) | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 {Repeat for each product/version group}
 
 ## Notes
 
-- ✅ = Example exists in `samples/{language}/`
+- ✅ = Example exists in `recipes/{language}/`
 - ❌ = Not yet generated (run `discover-sdks` to queue generation)
 - Coverage auto-updates on every PR merge to `main`
 ```
@@ -130,8 +130,8 @@ For recipe rows, link each ✅ to the actual directory path. For ❌, leave it a
 
 ## Step 6: Update Per-Language README Files
 
-For each language directory that exists under `samples/`, write or update
-`samples/{language}/README.md`:
+For each language directory that exists under `recipes/`, write or update
+`recipes/{language}/README.md`:
 
 ```markdown
 # {Language} Samples
@@ -174,14 +174,14 @@ To get one-line descriptions for each recipe, read the first line after the `#` 
 in each recipe's `README.md`:
 
 ```bash
-head -3 "samples/{language}/{product}/{version}/{recipe-slug}/README.md" 2>/dev/null | tail -1
+head -3 "recipes/{language}/{product}/{version}/{recipe-slug}/README.md" 2>/dev/null | tail -1
 ```
 
 ---
 
 ## Step 7: Update Per-Product-Per-Version README Files
 
-For each `samples/{language}/{product}/{version}/` directory that contains at least one
+For each `recipes/{language}/{product}/{version}/` directory that contains at least one
 recipe, write or update a README:
 
 ```markdown
@@ -218,11 +218,11 @@ If changes exist:
 
 ```bash
 git add COVERAGE.md
-git add samples/
+git add recipes/
 
 git commit -m "docs: update coverage matrix
 
-Triggered by PR merge. Reflects current state of samples/."
+Triggered by PR merge. Reflects current state of recipes/."
 
 git push
 ```
@@ -238,7 +238,7 @@ git pull --rebase && git push
 ## Safety Rules
 
 - NEVER delete any existing `example.*`, `example_test.*`, or recipe-level `README.md` files
-- ONLY write to: `COVERAGE.md`, `samples/{language}/README.md`, `samples/{language}/{product}/{version}/README.md`
+- ONLY write to: `COVERAGE.md`, `recipes/{language}/README.md`, `recipes/{language}/{product}/{version}/README.md`
 - NEVER commit to a non-main branch from this instruction — coverage updates always go to main
 - If reading any recipe README fails (file missing), skip the description column and leave it blank
 - If the push fails twice, output an error and stop — do not retry indefinitely

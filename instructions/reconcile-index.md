@@ -14,7 +14,7 @@ Count the number of example files present for each language:
 
 ```bash
 for lang in python javascript go dotnet java rust cli; do
-  count=$(find "samples/$lang/" -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | wc -l | tr -d ' ')
+  count=$(find "recipes/$lang/" -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | wc -l | tr -d ' ')
   echo "$lang: $count"
 done
 ```
@@ -23,7 +23,7 @@ Also count distinct products and recipe slugs per language:
 
 ```bash
 for lang in python javascript go dotnet java rust cli; do
-  products=$(find "samples/$lang/" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
+  products=$(find "recipes/$lang/" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
   echo "$lang products: $products"
 done
 ```
@@ -89,10 +89,10 @@ introduction, before any detailed sections):
 
 ## Step 4: Verify Each Sample Directory Has All Required Files
 
-For every directory under `samples/` that represents a recipe (depth 4: language/product/version/slug):
+For every directory under `recipes/` that represents a recipe (depth 4: language/product/version/slug):
 
 ```bash
-find samples/ -mindepth 4 -maxdepth 4 -type d
+find recipes/ -mindepth 4 -maxdepth 4 -type d
 ```
 
 For each directory found, check that ALL three required files exist:
@@ -102,7 +102,7 @@ For each directory found, check that ALL three required files exist:
 
 ```bash
 # Check each directory
-for dir in $(find samples/ -mindepth 4 -maxdepth 4 -type d); do
+for dir in $(find recipes/ -mindepth 4 -maxdepth 4 -type d); do
   has_example=$(find "$dir" -maxdepth 1 -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | head -1)
   has_test=$(find "$dir" -maxdepth 1 \( -name "example_test.*" -o -name "example.test.*" -o -name "ExampleTest.*" -o -name "example_test.sh" \) 2>/dev/null | head -1)
   has_readme=$([ -f "$dir/README.md" ] && echo "yes" || echo "")
@@ -187,7 +187,7 @@ If the README was modified:
 git add README.md
 git commit -m "docs: update sample count table in README
 
-Reconciled counts based on current state of samples/."
+Reconciled counts based on current state of recipes/."
 git push
 ```
 

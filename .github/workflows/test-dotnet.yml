@@ -3,7 +3,7 @@ name: Test .NET Samples
 on:
   pull_request:
     paths:
-      - 'samples/dotnet/**'
+      - 'recipes/dotnet/**'
   schedule:
     - cron: '0 9 * * *'
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
       - name: Check for examples
         id: check
         run: |
-          if find samples/dotnet -name "ExampleTest.cs" 2>/dev/null | grep -q .; then
+          if find recipes/dotnet -name "ExampleTest.cs" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
@@ -37,7 +37,7 @@ jobs:
         if: steps.check.outputs.has_tests == 'true'
         id: check_projects
         run: |
-          csproj_count=$(find samples/dotnet -name "*.csproj" 2>/dev/null | wc -l | tr -d ' ')
+          csproj_count=$(find recipes/dotnet -name "*.csproj" 2>/dev/null | wc -l | tr -d ' ')
           echo "csproj_count=$csproj_count" >> $GITHUB_OUTPUT
           if [ "$csproj_count" -eq 0 ]; then
             echo "No .csproj files found, skipping"
@@ -49,7 +49,7 @@ jobs:
       - name: Restore dependencies
         if: steps.check.outputs.has_tests == 'true' && steps.check_projects.outputs.has_projects == 'true'
         run: |
-          find samples/dotnet -name "*.csproj" | while read csproj; do
+          find recipes/dotnet -name "*.csproj" | while read csproj; do
             echo "Restoring: $csproj"
             dotnet restore "$csproj"
           done
@@ -57,7 +57,7 @@ jobs:
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true' && steps.check_projects.outputs.has_projects == 'true'
         run: |
-          find samples/dotnet -name "*.csproj" | while read csproj; do
+          find recipes/dotnet -name "*.csproj" | while read csproj; do
             dir=$(dirname "$csproj")
             # Only run dotnet test on projects that contain test files
             if find "$dir" -name "ExampleTest.cs" | grep -q .; then
