@@ -196,6 +196,9 @@ EOF
 
 # Enable auto-merge — merges once all checks pass
 gh pr merge --auto --squash --subject "chore: update features.json with new {sdk} features"
+
+# Bot-created PRs do not fire pull_request events — trigger E2E explicitly
+gh workflow run e2e.yml --ref "$BRANCH"
 ```
 
 ---

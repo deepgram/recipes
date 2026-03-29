@@ -119,6 +119,8 @@ jobs:
               --title "docs: update recipe table" \
               --body "Automated hourly update of the recipe coverage table in README.md.")
             gh pr merge "$PR_URL" --auto --squash
+            # Bot-created PRs don't fire pull_request events — trigger E2E explicitly
+            gh workflow run e2e.yml --ref "$BRANCH"
           else
             echo "README unchanged — nothing to do."
           fi
