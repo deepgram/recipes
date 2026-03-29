@@ -183,7 +183,10 @@ This requires human review before the SDK can be added to the tracking system:
 1. Verify this is an official Deepgram SDK (not a fork, demo, or archived repo)
 2. Add an entry to `.deepgram/sdks.json` with the correct `language`, `slug`, and `repo` fields
 3. Create a `samples/{language}/` directory with an appropriate manifest file
-4. Create a `test-{language}.yml` workflow for running samples tests
+4. Manually add a `test-{language}.yml` workflow by copying an existing one and adapting it
+   NOTE: Workflow files CANNOT be created by agents — GITHUB_TOKEN lacks the `workflows`
+   scope, and even if bypassed, workflow changes don't trigger CI until after they are merged.
+   This step must be done by a human in a separate PR.
 5. Close this issue once onboarding is complete
 
 Do NOT auto-add this repository to sdks.json.

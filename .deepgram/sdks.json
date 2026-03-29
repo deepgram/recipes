@@ -88,15 +88,15 @@
       "name": "CLI",
       "language": "cli",
       "slug": "cli",
-      "repo": "deepgram/deepgram-cli",
+      "repo": "deepgram/cli",
       "file_extension": "sh",
       "test_file": "example_test.sh",
-      "install_command": "# Install Deepgram CLI: https://github.com/deepgram/deepgram-cli",
+      "install_command": "pip install deepctl",
       "run_command": "bash example.sh",
       "test_command": "bash example_test.sh",
-      "package_manager": "homebrew",
-      "sdk_package": "deepgram/tap/deepgram",
-      "sdk_import": "deepgram"
+      "package_manager": "pip",
+      "sdk_package": "deepctl",
+      "sdk_import": "dg"
     }
   ]
 }
