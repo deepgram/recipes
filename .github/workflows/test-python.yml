@@ -42,7 +42,7 @@ jobs:
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: pytest samples/python/ -v --timeout=60 -x
+        run: pytest samples/python/ -v --timeout=60 -x --import-mode=importlib
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15
