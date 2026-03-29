@@ -48,7 +48,15 @@ recipes/{language}/{product}/{version}/{recipe}/
 ## Recipes
 
 <!-- recipes-table-start -->
-*Run the workflow manually or wait for the hourly cron to populate this table.*
+*4 recipes · last updated 2026-03-29 15:47 UTC*
+
+| Recipe | Language | Product | Version | Files | Tests |
+|--------|----------|---------|---------|-------|-------|
+| [diarize](recipes/python/speech-to-text/v1/diarize/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
+| [paragraphs](recipes/python/speech-to-text/v1/paragraphs/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
+| [transcribe-url](recipes/python/speech-to-text/v1/transcribe-url/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
+| [generate-audio](recipes/python/text-to-speech/v1/generate-audio/) | Python | text-to-speech | v1 | ✅ ✅ | — no run |
+
 <!-- recipes-table-end -->
 
 ## Agent schedules
