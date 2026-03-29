@@ -56,6 +56,26 @@ Types: feat, fix, docs, style, refactor, test, chore
 
 Never add Co-Authored-By lines for Claude Code.
 
+## Workflow trigger design rule
+
+GitHub blocks event propagation between workflows when using `GITHUB_TOKEN`:
+a workflow-created issue does not fire `on: issues`, and a workflow-merged PR
+does not fire `on: pull_request.closed`. This breaks any `workflow1 → workflow2`
+event chain where workflow1 is autonomous.
+
+**Rule:** every downstream workflow that should run after an agent action MUST have
+a cron fallback. The cron is the safety net that picks up work the event trigger missed.
+
+Current design:
+- `process-queue` — cron at :27 catches issues created by `discover-sdks` (workflow-created
+  issues don't fire `on: issues`)
+- `update-coverage` — cron every 6h catches PRs merged by `process-queue` (workflow-merged
+  PRs don't fire `on: pull_request.closed`)
+- `reconcile-index` — cron-only by design; daily safety net for any drift
+
+If you add a new downstream workflow, give it a cron. Never rely on event triggers alone
+when the upstream action may be performed by an autonomous workflow.
+
 ## Never touch .github/workflows/
 
 Agents running inside GitHub Actions CANNOT create or modify files in `.github/workflows/`:

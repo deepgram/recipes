@@ -48,3 +48,24 @@ claude --model claude-opus-4-6 -p "$(cat instructions/reconcile-index.md)"
 - Instructions check existing state before taking action (no blind writes).
 - Instructions never commit directly to `main`.
 - Instructions skip failing items with a warning rather than aborting entirely.
+
+## Cron-as-safety-net pattern
+
+GitHub blocks event propagation between workflows when `GITHUB_TOKEN` is the actor.
+A workflow-created issue does not fire `on: issues`. A workflow-merged PR does not
+fire `on: pull_request.closed`. Any `autonomous-workflow → event → other-workflow`
+chain is silently broken.
+
+**Every downstream workflow has a cron fallback for this reason:**
+
+```
+discover-sdks (cron :07)
+  └─ creates queue:generate issues
+       └─ process-queue (cron :27) ← cron fires even when issues were created by a workflow
+            └─ merges recipe PRs
+                 └─ update-coverage (cron every 6h) ← cron fires even when PR was merged by workflow
+```
+
+`reconcile-index` (daily) is the final safety net — catches any drift the other workflows missed.
+
+When adding new downstream workflows, always include a cron trigger.

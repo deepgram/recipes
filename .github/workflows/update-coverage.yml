@@ -6,15 +6,24 @@ on:
       - closed
     branches:
       - main
+  schedule:
+    # Cron fallback: GitHub will not fire pull_request.closed when a workflow
+    # merges a PR using GITHUB_TOKEN (workflow→workflow event chain is blocked).
+    # This cron ensures coverage stays current even when process-queue auto-merges
+    # recipe PRs. The instruction is idempotent — commits nothing if up to date.
+    - cron: '30 */6 * * *'  # Every 6 hours at :30
   workflow_dispatch:
 
 concurrency:
-  group: update-coverage-${{ github.ref }}
+  group: update-coverage
   cancel-in-progress: false
 
 jobs:
   run:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
+      github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
