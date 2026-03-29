@@ -1,50 +1,12 @@
 name: Suggest a Recipe
-description: Suggest a new recipe for the collection
+description: Got an idea? Tell us what you want to see.
 labels: ["type:suggestion"]
 body:
-  - type: dropdown
-    id: language
-    attributes:
-      label: Language
-      description: Which language(s) should this recipe cover? (select "All" if you want it across all SDKs)
-      options:
-        - All languages
-        - Python
-        - JavaScript
-        - Go
-        - .NET
-        - Java
-        - Rust
-        - CLI
-    validations:
-      required: true
-  - type: dropdown
-    id: product
-    attributes:
-      label: Product
-      options:
-        - Speech-to-Text
-        - Text-to-Speech
-        - Audio Intelligence
-        - Voice Agents
-    validations:
-      required: true
-  - type: input
-    id: recipe
-    attributes:
-      label: What should the recipe demonstrate?
-      placeholder: "e.g. Real-time diarization with speaker labels printed as the audio streams"
-    validations:
-      required: true
   - type: textarea
-    id: why
+    id: suggestion
     attributes:
-      label: Why would this be useful?
-      description: What problem does it solve? Who would use it?
+      label: What would you like to see?
+      description: Describe it however you like — a use case, a feature, a question, anything.
+      placeholder: "e.g. I want to see how to do real-time transcription with speaker labels in Python"
     validations:
       required: true
-  - type: textarea
-    id: notes
-    attributes:
-      label: Additional notes
-      description: Links, API docs, example output, anything that helps
