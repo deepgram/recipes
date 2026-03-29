@@ -54,9 +54,13 @@ jobs:
           TABLE_ROWS=""
           COUNT=0
 
-          while IFS= read -r example_file; do
-            dir=$(dirname "$example_file")
-            # Expected: recipes/{language}/{product}/{version}/{recipe}
+          # Anchor on README.md — avoids duplicates from multi-file recipes (e.g. example.test.js)
+          while IFS= read -r readme_file; do
+            dir=$(dirname "$readme_file")
+            # Require exactly depth 5: recipes/{language}/{product}/{version}/{recipe}
+            depth=$(echo "$dir" | tr -cd '/' | wc -c | tr -d ' ')
+            [ "$depth" -ne 4 ] && continue
+
             IFS='/' read -r _ language product version recipe <<< "$dir"
             [ -z "$recipe" ] && continue
 
@@ -66,13 +70,12 @@ jobs:
             fi
             status="${lang_status[$language]}"
 
-            # Check all three required files exist
-            ext="${example_file##*.}"
+            # Detect test file — handles _test, .test., and ExampleTest naming
             has_test="❌"
-            has_readme="❌"
-            [ -n "$(find "$dir" -maxdepth 1 -name "example_test.*" 2>/dev/null)" ] && has_test="✅"
-            [ -f "$dir/README.md" ] && has_readme="✅"
-            files="${has_test} ${has_readme}"
+            if find "$dir" -maxdepth 1 -iname "*test*" ! -name "README.md" 2>/dev/null | grep -q .; then
+              has_test="✅"
+            fi
+            files="${has_test} ✅"
 
             # Capitalise language for display
             lang_display="${language^}"
@@ -82,8 +85,7 @@ jobs:
 
             TABLE_ROWS="${TABLE_ROWS}| [${recipe}]($dir/) | ${lang_display} | ${product} | ${version} | ${files} | ${status} |\n"
             COUNT=$((COUNT + 1))
-          done < <(find recipes -name "example.*" ! -name "*_test*" ! -name "*.mod" \
-                      ! -name "*.json" ! -name "*.toml" 2>/dev/null | sort)
+          done < <(find recipes -name "README.md" -mindepth 5 -maxdepth 5 | sort)
 
           # ── Assemble full table ───────────────────────────────────────────
           UPDATED=$(date -u '+%Y-%m-%d %H:%M UTC')
