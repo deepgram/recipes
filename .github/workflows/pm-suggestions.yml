@@ -1,0 +1,52 @@
+name: PM — Suggestions
+
+on:
+  issues:
+    types:
+      - opened
+      - labeled
+  schedule:
+    - cron: '47 * * * *'  # Hourly sweep for any unreviewed suggestions
+  workflow_dispatch:
+
+concurrency:
+  group: pm-suggestions
+  cancel-in-progress: false
+
+jobs:
+  run:
+    # Only run when a suggestion issue is involved, or on schedule/dispatch
+    if: >
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' && 
+       contains(github.event.issue.labels.*.name, 'type:suggestion'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "recipes-bot"
+          git config user.email "noreply@deepgram.com"
+
+      - name: Review suggestions
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          mode: agent
+          model: claude-opus-4-6
+          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
+          timeout_minutes: 15
+          direct_prompt: "Read and execute instructions/pm-suggestions.md"
+        env:
+          KAPA_API_KEY: ${{ secrets.KAPA_API_KEY }}
+          KAPA_PROJECT_ID: ${{ vars.KAPA_PROJECT_ID }}

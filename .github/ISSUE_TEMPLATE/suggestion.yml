@@ -1,0 +1,12 @@
+name: Suggest a Recipe
+description: Got an idea? Tell us what you want to see.
+labels: ["type:suggestion"]
+body:
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What would you like to see?
+      description: Describe it however you like — a use case, a feature, a question, anything.
+      placeholder: "e.g. I want to see how to do real-time transcription with speaker labels in Python"
+    validations:
+      required: true

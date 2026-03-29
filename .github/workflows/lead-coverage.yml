@@ -1,0 +1,42 @@
+name: PM — Docs
+
+on:
+  schedule:
+    # Sweep documentation every 6 hours. Uses a fixed pm/docs branch so there
+    # is never more than one open docs PR — force-push updates it in place.
+    - cron: '30 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: lead-coverage
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "recipes-bot"
+          git config user.email "noreply@deepgram.com"
+
+      - name: Run instruction
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          mode: agent
+          model: claude-opus-4-6
+          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
+          timeout_minutes: 15
+          direct_prompt: "Read and execute instructions/lead-coverage.md"

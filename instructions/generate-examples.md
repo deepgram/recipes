@@ -157,663 +157,91 @@ alone — do not abort.
 
 ---
 
-## Step 5: Create a Feature Branch
+## Step 5: For Each Missing Recipe, Open One PR
+
+Work through every missing recipe path one at a time. For each recipe:
+
+### 5a — Create a dedicated branch
 
 ```bash
-BRANCH="generate/{language}-$(date +%Y%m%d-%H%M)"
+PRODUCT=$(echo "{recipe_path}" | cut -d/ -f1)   # e.g. speech-to-text
+VERSION=$(echo "{recipe_path}" | cut -d/ -f2)   # e.g. v1
+SLUG=$(echo "{recipe_path}"    | cut -d/ -f3)   # e.g. paragraphs
+
+BRANCH="recipe/{language}/${PRODUCT}/${VERSION}/${SLUG}"
+git checkout main
 git checkout -b "$BRANCH"
 
-# Verify you are NOT on main
 CURRENT=$(git branch --show-current)
-if [ "$CURRENT" = "main" ]; then
-  echo "ERROR: Still on main branch. Aborting."
-  exit 1
+[ "$CURRENT" = "main" ] && echo "ERROR: Still on main. Aborting." && exit 1
+```
+
+### 5b — Check the directory does not already exist
+
+```bash
+if [ -d "recipes/{language}/${PRODUCT}/${VERSION}/${SLUG}" ]; then
+  echo "[SKIP] recipes/{language}/${PRODUCT}/${VERSION}/${SLUG} already exists."
+  git checkout main
+  continue
 fi
-
-echo "Working on branch: $BRANCH"
 ```
 
-All file creation and commits happen on this branch. Never touch main.
+### 5c — Generate the three recipe files
 
----
+Create `recipes/{language}/${PRODUCT}/${VERSION}/${SLUG}/` and write:
 
-## Step 6: Generate Recipe Files
+1. **`example.{ext}`** — the runnable example (< 50 lines, feature-focused, commented)
+2. **`example_test.{ext}`** — runs the example as a subprocess, asserts exit 0 + output
+3. **`README.md`** — feature explanation, params table, sample output, run instructions
 
-For each missing recipe path (e.g., `speech-to-text/v1/transcribe-url-nova3`), generate
-three files inside `recipes/{language}/{recipe-path}/`.
+Follow the language templates, commenting standard, and API key rules in the sections below.
 
-### Before creating any file:
-
-Check if the directory already exists and has content:
+### 5d — Commit and push
 
 ```bash
-ls "recipes/{language}/{recipe-path}/" 2>/dev/null
-```
-
-If `example.*` already exists in this directory, skip it with a log message:
-```
-[SKIP] recipes/{language}/{recipe-path}/example.* already exists.
-```
-
-### Understand the recipe path structure:
-
-A path like `speech-to-text/v1/transcribe-url-nova3` means:
-- Product: `speech-to-text`
-- API version: `v1`
-- Recipe slug: `transcribe-url-nova3`
-
-The slug describes the feature. Use it to understand what the example should demonstrate.
-
-Common slug patterns:
-- `transcribe-url-{model}` — transcribe a URL using a specific model
-- `transcribe-file-{model}` — transcribe a local file
-- `smart-format` — smart formatting feature
-- `diarize` — speaker diarization
-- `summarize` — audio intelligence summarization
-- `topics` — topic detection
-- `sentiment` — sentiment analysis
-- `intents` — intent detection
-- `stream-microphone` — live streaming from microphone
-- `text-to-speech-{model}` — TTS with specific model
-- `voice-agent-basic` — basic voice agent setup
-
-### Files to create for each recipe:
-
-#### File 1: `example.{ext}` — The runnable recipe
-
-Requirements:
-- MUST be under 50 lines of code
-- MUST read API key from environment, NEVER hardcode
-- MUST demonstrate EXACTLY the feature described by the recipe slug
-- MUST print meaningful output (transcript text, audio size, timing, etc.) — not just "done"
-- MUST use `https://dpgr.am/spacewalk.wav` as the demo audio URL for audio examples
-- MUST use the correct SDK import paths (verified from the SDK README in Step 4)
-- Use async where appropriate (streaming, voice agents, TTS with streaming output)
-- Keep it simple and readable — this is a teaching example
-
-**Commenting standard — this is critical:**
-
-Comments serve both human readers and future agents updating the recipe. Include ALL of:
-
-1. **Module docstring** — name the recipe, state what feature it demonstrates, and describe
-   how the output differs from the baseline (e.g., "Without X: flat string. With X: blocks.").
-   If there are related recipes in sibling directories, name them.
-
-2. **Feature-enabling parameter** — mark the one parameter that is the point of this recipe
-   with an inline comment: `param=True,  # <-- THIS is the feature this recipe demonstrates`
-
-3. **Response path comment** — explain exactly where the feature's output lives in the
-   response object and what fields are available, e.g.:
-   ```
-   # alt.paragraphs.paragraphs  — list of paragraph objects
-   #   para.sentences           — list of sentence objects
-   #     sentence.text          — the sentence string
-   #     sentence.start/end     — timing in seconds
-   ```
-
-4. **Edge case comments** — note conditions where the feature may not return data
-   (e.g., "paragraphs can be absent if audio is too short").
-
-5. **Optional parameter hints** — in a comment near the API call, list 2-3 other parameters
-   a user might want to try for this recipe.
-
-Agents updating this recipe later must be able to understand what is boilerplate vs
-what is specific to this recipe's feature, purely from reading the comments.
-
-**Python (`example.py`) — SDK v6+ API:**
-
-`DeepgramClient()` with no args reads `DEEPGRAM_API_KEY` from the environment automatically.
-Options are passed as keyword arguments directly to the method — no `PrerecordedOptions` class.
-
-```python
-from deepgram import DeepgramClient
-
-AUDIO_URL = "https://dpgr.am/spacewalk.wav"
-
-client = DeepgramClient()  # reads DEEPGRAM_API_KEY from environment
-
-response = client.listen.v1.media.transcribe_url(
-    url=AUDIO_URL,
-    model="nova-3",
-    smart_format=True,
-    # feature-specific parameters go here (diarize=True, paragraphs=True, etc.)
-)
-
-if response.results and response.results.channels:
-    print(response.results.channels[0].alternatives[0].transcript)
-```
-
-For TTS examples, use the speak API (generate returns an Iterator[bytes]):
-```python
-import os
-from deepgram import DeepgramClient
-
-client = DeepgramClient()  # reads DEEPGRAM_API_KEY from environment
-
-audio_chunks = client.speak.v1.audio.generate(
-    text="Hello from Deepgram!",
-    model="aura-2-thalia-en",
-)
-
-with open("output.mp3", "wb") as f:
-    for chunk in audio_chunks:
-        f.write(chunk)
-
-print(f"Audio saved: {os.path.getsize('output.mp3')} bytes")
-```
-
-For streaming examples, use asyncio:
-```python
-import asyncio
-from deepgram import DeepgramClient, LiveTranscriptionEvents
-
-async def main():
-    client = DeepgramClient()  # reads DEEPGRAM_API_KEY from environment
-    connection = client.listen.asyncwebsocket.v("1")
-    # ... streaming setup ...
-
-asyncio.run(main())
-```
-
-**JavaScript (`example.js`):**
-```javascript
-import { createClient } from "@deepgram/sdk";
-
-const client = createClient(process.env.DEEPGRAM_API_KEY);
-
-async function main() {
-  const { result, error } = await client.listen.prerecorded.transcribeUrl(
-    { url: "https://dpgr.am/spacewalk.wav" },
-    {
-      model: "nova-3",
-      // feature-specific options
-    }
-  );
-  if (error) throw error;
-  console.log(result.results.channels[0].alternatives[0].transcript);
-}
-
-main().catch(console.error);
-```
-
-For TTS:
-```javascript
-import { createClient } from "@deepgram/sdk";
-import { writeFile } from "node:fs/promises";
-
-const client = createClient(process.env.DEEPGRAM_API_KEY);
-
-async function main() {
-  const response = await client.speak.request(
-    { text: "Hello from Deepgram!" },
-    { model: "aura-2-thalia-en" }
-  );
-  const stream = await response.getStream();
-  const buffer = await getAudioBuffer(stream);
-  await writeFile("output.mp3", buffer);
-  console.log(`Audio saved: ${buffer.length} bytes`);
-}
-
-async function getAudioBuffer(response) {
-  const reader = response.getReader();
-  const chunks = [];
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-  }
-  const dataArray = chunks.reduce((acc, chunk) => {
-    const tmp = new Uint8Array(acc.byteLength + chunk.byteLength);
-    tmp.set(new Uint8Array(acc), 0);
-    tmp.set(new Uint8Array(chunk), acc.byteLength);
-    return tmp.buffer;
-  }, new ArrayBuffer(0));
-  return Buffer.from(dataArray);
-}
-
-main().catch(console.error);
-```
-
-**Go (`example.go`):**
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-
-	api "github.com/deepgram/deepgram-go-sdk/v3/pkg/api/listen/v1/rest"
-	interfaces "github.com/deepgram/deepgram-go-sdk/v3/pkg/api/listen/v1/rest/interfaces"
-	client "github.com/deepgram/deepgram-go-sdk/v3/pkg/client/listen"
-)
-
-func main() {
-	ctx := context.Background()
-	c, err := client.NewRESTWithDefaults()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	dg := api.New(c)
-
-	options := &interfaces.PreRecordedTranscriptionOptions{
-		Model:       "nova-3",
-		SmartFormat: true,
-		// feature-specific options
-	}
-
-	res, err := dg.FromURL(ctx, "https://dpgr.am/spacewalk.wav", options)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	fmt.Println((*res.Results.Channels)[0].Alternatives[0].Transcript)
-}
-```
-
-For Go TTS, use the speak API package. For streaming, use the websocket client.
-
-**.NET (`Program.cs`):**
-```csharp
-using Deepgram;
-using Deepgram.Models.Listen.v1.REST;
-
-var client = new DeepgramClient(Environment.GetEnvironmentVariable("DEEPGRAM_API_KEY")!);
-
-var response = await client.Listen.Rest.v1.TranscribeUrlAsync(
-    new UrlSource("https://dpgr.am/spacewalk.wav"),
-    new PreRecordedSchema
-    {
-        Model = "nova-3",
-        // feature-specific options
-    }
-);
-
-Console.WriteLine(response.Results?.Channels?[0]?.Alternatives?[0]?.Transcript);
-```
-
-**Java (`Example.java`):**
-```java
-import com.deepgram.sdk.Deepgram;
-import com.deepgram.sdk.DeepgramClient;
-import com.deepgram.sdk.audio.listen.ListenRestClient;
-import com.deepgram.sdk.audio.listen.prerecorded.PrerecordedOptions;
-import com.deepgram.sdk.audio.listen.prerecorded.SyncPrerecordedResponse;
-
-public class Example {
-    public static void main(String[] args) throws Exception {
-        DeepgramClient client = Deepgram.create(System.getenv("DEEPGRAM_API_KEY"));
-        ListenRestClient listen = client.listen().rest();
-
-        PrerecordedOptions options = PrerecordedOptions.builder()
-            .model("nova-3")
-            // feature-specific options
-            .build();
-
-        SyncPrerecordedResponse response = listen.transcribeUrl(
-            "https://dpgr.am/spacewalk.wav",
-            options
-        );
-
-        System.out.println(
-            response.getResults()
-                    .getChannels().get(0)
-                    .getAlternatives().get(0)
-                    .getTranscript()
-        );
-    }
-}
-```
-
-**Rust (`example.rs` or `main.rs`):**
-```rust
-use deepgram::{
-    audio::listen::rest::options::ListenOptions,
-    Deepgram,
-};
-use std::env;
-
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let api_key = env::var("DEEPGRAM_API_KEY")?;
-    let dg = Deepgram::new(api_key)?;
-
-    let options = ListenOptions::builder()
-        .model("nova-3")
-        // feature-specific options
-        .build();
-
-    let response = dg
-        .audio()
-        .listen()
-        .rest()
-        .transcribe_url("https://dpgr.am/spacewalk.wav", &options)
-        .await?;
-
-    let transcript = &response
-        .results
-        .channels[0]
-        .alternatives[0]
-        .transcript;
-
-    println!("{}", transcript);
-    Ok(())
-}
-```
-
-**CLI (`example.sh`):**
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-# Transcribe audio from URL
-deepgram transcribe \
-  --model nova-3 \
-  --url "https://dpgr.am/spacewalk.wav"
-```
-
-**IMPORTANT:** Always look at the actual SDK README (fetched in Step 4) to verify:
-- The correct package/module import paths for the installed SDK version
-- The exact method names (they may differ from these templates)
-- Any breaking changes in the version specified in the queue issue
-
-If the templates above conflict with the SDK README, ALWAYS prefer the SDK README.
-
----
-
-#### File 2: `example_test.{ext}` — The test
-
-The test must:
-- Run the example as a subprocess (or equivalent)
-- Assert that the exit code is 0 (success)
-- Assert that stdout is non-empty
-- Not mock the Deepgram API — it runs for real using `DEEPGRAM_API_KEY` from the environment
-
-**Python (`example_test.py`):**
-```python
-import os
-import subprocess
-from pathlib import Path
-
-
-def test_example_runs():
-    example = Path(__file__).parent / "example.py"
-    result = subprocess.run(
-        ["python", str(example)],
-        capture_output=True,
-        text=True,
-        timeout=60,
-    )
-    assert result.returncode == 0, (
-        f"Example failed\nSTDOUT: {result.stdout}\nSTDERR: {result.stderr}"
-    )
-    assert result.stdout.strip(), "Example produced no output"
-```
-
-**JavaScript (`example.test.js`):**
-```javascript
-import { describe, it } from "node:test";
-import { ok } from "node:assert";
-import { execSync } from "node:child_process";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-describe("example", () => {
-  it("runs without error and produces output", () => {
-    const output = execSync("node example.js", {
-      cwd: __dirname,
-      timeout: 60000,
-      env: process.env,
-      encoding: "utf8",
-    });
-    ok(output.trim().length > 0, "Expected non-empty output");
-  });
-});
-```
-
-**Go (`example_test.go`):**
-```go
-package main
-
-import (
-	"os/exec"
-	"strings"
-	"testing"
-)
-
-func TestExampleRuns(t *testing.T) {
-	cmd := exec.Command("go", "run", "example.go")
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		t.Fatalf("Example failed: %v\nOutput: %s", err, string(output))
-	}
-	if strings.TrimSpace(string(output)) == "" {
-		t.Fatal("Example produced no output")
-	}
-}
-```
-
-**.NET (`ExampleTest.cs`):**
-```csharp
-using System.Diagnostics;
-using Xunit;
-
-public class ExampleTest
-{
-    [Fact]
-    public void ExampleRunsAndProducesOutput()
-    {
-        var psi = new ProcessStartInfo("dotnet", "run --project .")
-        {
-            WorkingDirectory = Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().Location)!,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-        };
-
-        using var process = Process.Start(psi)!;
-        process.WaitForExit(60_000);
-
-        Assert.Equal(0, process.ExitCode);
-        Assert.NotEmpty(process.StandardOutput.ReadToEnd().Trim());
-    }
-}
-```
-
-**Java (`ExampleTest.java`):**
-```java
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import java.io.*;
-
-class ExampleTest {
-    @Test
-    void exampleRunsAndProducesOutput() throws Exception {
-        ProcessBuilder pb = new ProcessBuilder("java", "-cp", "target/classes", "Example");
-        pb.redirectErrorStream(true);
-        Process process = pb.start();
-
-        String output = new String(process.getInputStream().readAllBytes());
-        int exitCode = process.waitFor();
-
-        assertEquals(0, exitCode, "Example exited with code " + exitCode + "\n" + output);
-        assertFalse(output.trim().isEmpty(), "Example produced no output");
-    }
-}
-```
-
-**Rust (in `src/main.rs` or via `#[cfg(test)]` block):**
-
-For Rust, add an integration test by creating `tests/integration_test.rs`:
-```rust
-use std::process::Command;
-
-#[test]
-fn example_runs_and_produces_output() {
-    let output = Command::new("cargo")
-        .args(["run", "--quiet"])
-        .output()
-        .expect("Failed to run example");
-
-    assert!(
-        output.status.success(),
-        "Example failed with: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    assert!(
-        !String::from_utf8_lossy(&output.stdout).trim().is_empty(),
-        "Example produced no output"
-    );
-}
-```
-
-**CLI (`example_test.sh`):**
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-output=$(bash "$SCRIPT_DIR/example.sh")
-
-if [ -z "$output" ]; then
-  echo "FAIL: example.sh produced no output"
-  exit 1
-fi
-
-echo "PASS: example.sh ran successfully"
-echo "Output: $output"
-```
-
----
-
-#### File 3: `README.md` — Recipe documentation
-
-Use this template exactly:
-
-```markdown
-# {Recipe Name} ({Product} {version})
-
-{One-sentence description of what this feature does and why you'd use it.}
-
-## What it does
-
-{2-3 sentences explaining the feature in plain language. What changes in the
-output when this feature is enabled? What problem does it solve?}
-
-## Key parameters
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `{param}` | `{value}` | {what it controls} |
-
-## Example output
-
-```
-{A brief, realistic example of what the output looks like. For transcription,
-show a short transcript snippet. For TTS, show file size info. Keep it short.}
-```
-
-## Prerequisites
-
-- {Language} {minimum version}+
-- Set `DEEPGRAM_API_KEY` environment variable
-- Install dependencies: `{install command}`
-
-## Run
-
-```bash
-{the exact command to run the example}
-```
-```
-
-Fill in all placeholders with accurate values. The Recipe Name should be human-readable
-(e.g., "Smart Format" not "smart-format"). The Product should be the full product name
-(e.g., "Speech-to-Text").
-
----
-
-## Step 7: Commit and Push the Generated Files
-
-After generating all files for all missing recipes:
-
-```bash
-git add "recipes/{language}/"
-
-git commit -m "feat({language}): add {product} {version} recipes
-
-Recipes added:
-{list of recipe paths, one per line prefixed with "- "}
-
-Closes #{issue_number}"
-
+git add "recipes/{language}/${PRODUCT}/${VERSION}/${SLUG}/"
+git commit -m "feat({language}): ${PRODUCT} ${VERSION} — ${SLUG}"
 git push origin "$BRANCH"
 ```
 
-If there are recipes for multiple products, group them in the commit message.
-
-Verify the push succeeded before continuing.
-
----
-
-## Step 8: Create a Pull Request
+### 5e — Open PR with auto-merge
 
 ```bash
-gh pr create \
-  --title "feat({language}): add {product} {version} recipes" \
+PR_URL=$(gh pr create \
+  --title "feat({language}): ${PRODUCT} ${VERSION} — ${SLUG}" \
   --label "type:samples" \
-  --label "language:{slug}" \
-  --body "$(cat <<'PR_BODY'
-## Summary
+  --label "language:{language}" \
+  --body "Adds the **${SLUG}** recipe for ${PRODUCT} ${VERSION} (${language}).
 
-Adds {N} recipe(s) for {language} covering {product} {version}.
+Closes part of #{issue_number}")
 
-### Recipes added
+gh pr merge "$PR_URL" --auto --squash
 
-{bullet list of recipe paths}
-
-### How to test
-
-1. Set `DEEPGRAM_API_KEY` in your environment
-2. Run the {language} test workflow locally or check the CI run on this PR
-
-Closes #{issue_number}
-PR_BODY
-)"
+# Bot PRs don't fire pull_request events — trigger E2E explicitly
+gh workflow run lead-e2e.yml --ref "$BRANCH"
 ```
 
-Capture the PR URL from the output. Then immediately enable auto-merge:
+### 5f — Return to main for the next recipe
 
 ```bash
-# Enable auto-merge — the PR will merge automatically once all test checks pass.
-# Requires "Allow auto-merge" to be enabled in repository Settings → General.
-gh pr merge --auto --squash --subject "feat({language}): add {product} {version} recipes"
-
-# Bot-created PRs do not fire pull_request events (GitHub blocks workflow→workflow chains).
-# Explicitly trigger the E2E check on this branch so the required status check runs.
-gh workflow run e2e.yml --ref "$BRANCH"
+git checkout main
 ```
 
-The E2E check will run on the branch. When it passes the PR auto-merges.
-If tests fail, the PR remains open for investigation — do not force-merge.
+Repeat steps 5a–5f for every missing recipe path.
 
 ---
 
-## Step 9: Close the Queue Issue
+## Step 6: Close the Queue Issue
+
+After all PRs are opened:
 
 ```bash
 gh issue close {issue_number} \
-  --comment "Generated {N} recipe(s) for {language}. See PR {pr_url}."
+  --comment "Opened {N} PRs — one per recipe. They will auto-merge as tests pass."
 ```
 
-Replace `{issue_number}` with the actual issue number from Step 1.
-
 ---
+
 
 ## Important Rules
 
@@ -841,10 +269,11 @@ Replace `{issue_number}` with the actual issue number from Step 1.
 - Use `aura-2-thalia-en` for TTS examples unless the recipe specifies otherwise
 
 ### File Safety
+- ONLY write files inside `recipes/{language}/{product}/{version}/{slug}/` — the three files for this one recipe
+- NEVER touch README.md, COVERAGE.md, instructions/, .deepgram/, .github/, or any file outside the recipe directory
 - NEVER overwrite an existing `example.*` file — skip and log a warning
-- NEVER modify files outside `recipes/{language}/`
 - NEVER commit to the `main` branch
-- Always work on the feature branch created in Step 5
+- Always work on the feature branch created in Step 5a
 
 ### When Unsure About SDK API
 - Read the SDK README again (Step 4)

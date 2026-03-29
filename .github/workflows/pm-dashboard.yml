@@ -1,0 +1,127 @@
+name: PM — Dashboard
+
+on:
+  schedule:
+    - cron: '37 * * * *'  # Every hour at :37
+  workflow_dispatch:
+
+concurrency:
+  group: update-recipe-table
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "recipes-bot"
+          git config user.email "noreply@deepgram.com"
+
+      - name: Build recipe table
+        id: build
+        run: |
+          python3 << 'PYEOF'
+          import json, os, re, subprocess
+          from datetime import datetime, timezone
+          
+          features = json.load(open('.deepgram/features.json'))
+          expected = {}
+          for product_slug, product in features['products'].items():
+              for version, vdata in product['versions'].items():
+                  expected[(product_slug, version)] = len(vdata['recipes'])
+          
+          langs = ['python','javascript','go','dotnet','java','rust','cli']
+          lang_display = {'python':'Python','javascript':'JavaScript','go':'Go',
+                          'dotnet':'.NET','java':'Java','rust':'Rust','cli':'CLI'}
+          
+          actual = {}
+          result = subprocess.run(
+              ['find','recipes','-name','README.md','-mindepth','5','-maxdepth','5'],
+              capture_output=True, text=True)
+          for path in result.stdout.strip().split('\n'):
+              if not path: continue
+              parts = os.path.dirname(path).split('/')
+              if len(parts) != 5: continue
+              _, lang, product, version, _ = parts
+              key = (lang, product, version)
+              actual[key] = actual.get(key, 0) + 1
+          
+          def test_status(lang):
+              r = subprocess.run(['gh','run','list','--repo','deepgram/recipes',
+                  '--workflow',f'test-{lang}.yml','--branch','main','--limit','1',
+                  '--json','conclusion','--jq','.[0].conclusion'],
+                  capture_output=True, text=True, timeout=10)
+              c = r.stdout.strip().strip('"')
+              return {'success':'✅','failure':'❌'}.get(c,'—')
+          
+          lang_tests = {l: test_status(l) for l in langs}
+          
+          def cell(lang, product, version):
+              got = actual.get((lang, product, version), 0)
+              exp = expected.get((product, version), 0)
+              if exp == 0: return '—'
+              if got == exp: return '✅'
+              if got == 0: return '❌'
+              return f'{got}/{exp}'
+          
+          now = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+          total_expected = sum(expected.values())
+          total_actual = {l: sum(actual.get((l,p,v),0) for (p,v) in expected) for l in langs}
+          
+          header = '| | ' + ' | '.join(lang_display[l] for l in langs) + ' |'
+          sep    = '|---|' + '|'.join(['---']*len(langs)) + '|'
+          rows = [header, sep]
+          
+          for product_slug, product in features['products'].items():
+              for version, vdata in product['versions'].items():
+                  label = f"{product['name']} \`{version}\`"
+                  cells = [cell(l, product_slug, version) for l in langs]
+                  rows.append(f"| {label} | " + ' | '.join(cells) + ' |')
+          
+          totals = [f"**{total_actual[l]}/{total_expected}**" for l in langs]
+          rows.append('| **Total** | ' + ' | '.join(totals) + ' |')
+          tests = [lang_tests[l] for l in langs]
+          rows.append('| **Tests** | ' + ' | '.join(tests) + ' |')
+          
+          table = f"*Last updated {now}*\n\n" + '\n'.join(rows)
+          
+          content = open('README.md').read()
+          new = re.sub(
+              r'<!-- recipes-table-start -->.*?<!-- recipes-table-end -->',
+              f'<!-- recipes-table-start -->\n{table}\n<!-- recipes-table-end -->',
+              content, flags=re.DOTALL)
+          open('README.md','w').write(new)
+          print("updated")
+          PYEOF
+
+      - name: Open PR if README changed
+        run: |
+          if ! git diff --quiet README.md; then
+            BRANCH="chore/recipe-table-$(date +%Y%m%d-%H%M)"
+            git checkout -b "$BRANCH"
+            git add README.md
+            git commit -m "docs: update recipe table"
+            git push origin "$BRANCH"
+            PR_URL=$(gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "docs: update recipe table" \
+              --body "Automated hourly update of the recipe coverage table in README.md.")
+            gh pr merge "$PR_URL" --auto --squash
+            # Bot-created PRs don't fire pull_request events — trigger E2E explicitly
+            gh workflow run e2e.yml --ref "$BRANCH"
+          else
+            echo "README unchanged — nothing to do."
+          fi

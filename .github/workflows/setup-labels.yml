@@ -42,4 +42,13 @@ jobs:
           gh label create "product:audio-intelligence" --color "0075ca" --description "Audio Intelligence samples" --force
           gh label create "product:voice-agents"       --color "0075ca" --description "Voice Agents samples" --force
 
+          gh label create "type:docs"       --color "0075ca" --description "Documentation update PR" --force
+          gh label create "type:suggestion"   --color "d4c5f9" --description "Recipe suggestion" --force
+
+          # Suggestion outcomes
+          gh label create "suggestion:accepted"    --color "0e8a16" --description "Suggestion accepted and queued" --force
+          gh label create "suggestion:declined"    --color "e4e669" --description "Suggestion declined (can be re-submitted)" --force
+          gh label create "suggestion:duplicate"   --color "cfd3d7" --description "Suggestion already covered" --force
+          gh label create "needs-clarification"    --color "e99695" --description "Needs more information before review" --force
+
           echo "All labels created successfully."

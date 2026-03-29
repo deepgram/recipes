@@ -40,11 +40,11 @@ Every README MUST:
 ## Autonomous operation
 
 This repository is managed by GitHub Actions workflows:
-- `discover-sdks.yml`: Runs hourly, checks for coverage gaps, creates queue issues
-- `process-queue.yml`: Runs hourly, picks up queue issues and generates examples
+- `pm.yml`: Runs hourly, checks for coverage gaps, creates queue issues
+- `engineer.yml`: Runs hourly, picks up queue issues and generates examples
 - `test-{language}.yml`: Runs on PR + daily, executes all examples against real API
-- `update-coverage.yml`: Runs on PR merge, updates COVERAGE.md
-- `reconcile-index.yml`: Runs daily, ensures README is accurate
+- `lead-coverage.yml`: Runs on PR merge, updates COVERAGE.md
+- `lead-reconcile.yml`: Runs daily, ensures README is accurate
 
 All autonomous logic lives in `instructions/*.md` — read these before modifying behavior.
 
@@ -67,11 +67,11 @@ event chain where workflow1 is autonomous.
 a cron fallback. The cron is the safety net that picks up work the event trigger missed.
 
 Current design:
-- `process-queue` — cron at :27 catches issues created by `discover-sdks` (workflow-created
+- `engineer` — cron at :27 catches issues created by `pm` (workflow-created
   issues don't fire `on: issues`)
-- `update-coverage` — cron every 6h catches PRs merged by `process-queue` (workflow-merged
+- `lead-coverage` — cron every 6h catches PRs merged by `engineer` (workflow-merged
   PRs don't fire `on: pull_request.closed`)
-- `reconcile-index` — cron-only by design; daily safety net for any drift
+- `lead-reconcile` — cron-only by design; daily safety net for any drift
 
 If you add a new downstream workflow, give it a cron. Never rely on event triggers alone
 when the upstream action may be performed by an autonomous workflow.

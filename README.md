@@ -48,104 +48,28 @@ recipes/{language}/{product}/{version}/{recipe}/
 ## Recipes
 
 <!-- recipes-table-start -->
-*82 recipes · last updated 2026-03-29 16:51 UTC*
+*Last updated 2026-03-29 20:20 UTC*
 
-| Recipe | Language | Product | Version | Files | Tests |
-|--------|----------|---------|---------|-------|-------|
-| [entities](recipes/javascript/audio-intelligence/v1/entities/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [entities](recipes/javascript/audio-intelligence/v1/entities/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [intents](recipes/javascript/audio-intelligence/v1/intents/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [intents](recipes/javascript/audio-intelligence/v1/intents/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [sentiment](recipes/javascript/audio-intelligence/v1/sentiment/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [sentiment](recipes/javascript/audio-intelligence/v1/sentiment/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [summarize](recipes/javascript/audio-intelligence/v1/summarize/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [summarize](recipes/javascript/audio-intelligence/v1/summarize/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [topics](recipes/javascript/audio-intelligence/v1/topics/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [topics](recipes/javascript/audio-intelligence/v1/topics/) | JavaScript | audio-intelligence | v1 | ❌ ✅ | — no run |
-| [detect-entities](recipes/javascript/speech-to-text/v1/detect-entities/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [detect-entities](recipes/javascript/speech-to-text/v1/detect-entities/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [detect-language](recipes/javascript/speech-to-text/v1/detect-language/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [detect-language](recipes/javascript/speech-to-text/v1/detect-language/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [diarize](recipes/javascript/speech-to-text/v1/diarize/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [diarize](recipes/javascript/speech-to-text/v1/diarize/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [intents](recipes/javascript/speech-to-text/v1/intents/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [intents](recipes/javascript/speech-to-text/v1/intents/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [keywords](recipes/javascript/speech-to-text/v1/keywords/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [keywords](recipes/javascript/speech-to-text/v1/keywords/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [multichannel](recipes/javascript/speech-to-text/v1/multichannel/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [multichannel](recipes/javascript/speech-to-text/v1/multichannel/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [paragraphs](recipes/javascript/speech-to-text/v1/paragraphs/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [paragraphs](recipes/javascript/speech-to-text/v1/paragraphs/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [punctuate](recipes/javascript/speech-to-text/v1/punctuate/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [punctuate](recipes/javascript/speech-to-text/v1/punctuate/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [redact](recipes/javascript/speech-to-text/v1/redact/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [redact](recipes/javascript/speech-to-text/v1/redact/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [search](recipes/javascript/speech-to-text/v1/search/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [search](recipes/javascript/speech-to-text/v1/search/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [sentiment](recipes/javascript/speech-to-text/v1/sentiment/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [sentiment](recipes/javascript/speech-to-text/v1/sentiment/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [smart-format](recipes/javascript/speech-to-text/v1/smart-format/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [smart-format](recipes/javascript/speech-to-text/v1/smart-format/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [streaming-file](recipes/javascript/speech-to-text/v1/streaming-file/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [streaming-file](recipes/javascript/speech-to-text/v1/streaming-file/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [streaming](recipes/javascript/speech-to-text/v1/streaming/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [streaming](recipes/javascript/speech-to-text/v1/streaming/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [summarize](recipes/javascript/speech-to-text/v1/summarize/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [summarize](recipes/javascript/speech-to-text/v1/summarize/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [topics](recipes/javascript/speech-to-text/v1/topics/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [topics](recipes/javascript/speech-to-text/v1/topics/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [transcribe-file](recipes/javascript/speech-to-text/v1/transcribe-file/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [transcribe-file](recipes/javascript/speech-to-text/v1/transcribe-file/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [transcribe-url](recipes/javascript/speech-to-text/v1/transcribe-url/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [transcribe-url](recipes/javascript/speech-to-text/v1/transcribe-url/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [utterances](recipes/javascript/speech-to-text/v1/utterances/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [utterances](recipes/javascript/speech-to-text/v1/utterances/) | JavaScript | speech-to-text | v1 | ❌ ✅ | — no run |
-| [streaming](recipes/javascript/speech-to-text/v2/streaming/) | JavaScript | speech-to-text | v2 | ❌ ✅ | — no run |
-| [streaming](recipes/javascript/speech-to-text/v2/streaming/) | JavaScript | speech-to-text | v2 | ❌ ✅ | — no run |
-| [transcribe-url](recipes/javascript/speech-to-text/v2/transcribe-url/) | JavaScript | speech-to-text | v2 | ❌ ✅ | — no run |
-| [transcribe-url](recipes/javascript/speech-to-text/v2/transcribe-url/) | JavaScript | speech-to-text | v2 | ❌ ✅ | — no run |
-| [generate-audio](recipes/javascript/text-to-speech/v1/generate-audio/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [generate-audio](recipes/javascript/text-to-speech/v1/generate-audio/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [select-encoding](recipes/javascript/text-to-speech/v1/select-encoding/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [select-encoding](recipes/javascript/text-to-speech/v1/select-encoding/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [select-model](recipes/javascript/text-to-speech/v1/select-model/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [select-model](recipes/javascript/text-to-speech/v1/select-model/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [stream-audio](recipes/javascript/text-to-speech/v1/stream-audio/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [stream-audio](recipes/javascript/text-to-speech/v1/stream-audio/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [websocket-streaming](recipes/javascript/text-to-speech/v1/websocket-streaming/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [websocket-streaming](recipes/javascript/text-to-speech/v1/websocket-streaming/) | JavaScript | text-to-speech | v1 | ❌ ✅ | — no run |
-| [connect](recipes/javascript/voice-agents/v1/connect/) | JavaScript | voice-agents | v1 | ❌ ✅ | — no run |
-| [connect](recipes/javascript/voice-agents/v1/connect/) | JavaScript | voice-agents | v1 | ❌ ✅ | — no run |
-| [custom-llm](recipes/javascript/voice-agents/v1/custom-llm/) | JavaScript | voice-agents | v1 | ❌ ✅ | — no run |
-| [custom-llm](recipes/javascript/voice-agents/v1/custom-llm/) | JavaScript | voice-agents | v1 | ❌ ✅ | — no run |
-| [custom-tts](recipes/javascript/voice-agents/v1/custom-tts/) | JavaScript | voice-agents | v1 | ❌ ✅ | — no run |
-| [custom-tts](recipes/javascript/voice-agents/v1/custom-tts/) | JavaScript | voice-agents | v1 | ❌ ✅ | — no run |
-| [function-calling](recipes/javascript/voice-agents/v1/function-calling/) | JavaScript | voice-agents | v1 | ❌ ✅ | — no run |
-| [function-calling](recipes/javascript/voice-agents/v1/function-calling/) | JavaScript | voice-agents | v1 | ❌ ✅ | — no run |
-| [detect-language](recipes/python/speech-to-text/v1/detect-language/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [diarize](recipes/python/speech-to-text/v1/diarize/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [intents](recipes/python/speech-to-text/v1/intents/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [paragraphs](recipes/python/speech-to-text/v1/paragraphs/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [punctuate](recipes/python/speech-to-text/v1/punctuate/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [sentiment](recipes/python/speech-to-text/v1/sentiment/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [smart-format](recipes/python/speech-to-text/v1/smart-format/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [summarize](recipes/python/speech-to-text/v1/summarize/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [topics](recipes/python/speech-to-text/v1/topics/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [transcribe-url](recipes/python/speech-to-text/v1/transcribe-url/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [utterances](recipes/python/speech-to-text/v1/utterances/) | Python | speech-to-text | v1 | ✅ ✅ | — no run |
-| [generate-audio](recipes/python/text-to-speech/v1/generate-audio/) | Python | text-to-speech | v1 | ✅ ✅ | — no run |
-
+| | Python | JavaScript | Go | .NET | Java | Rust | CLI |
+|---|---|---|---|---|---|---|---|
+| Speech-to-Text `v1` | 11/19 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Speech-to-Text `v2` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Text-to-Speech `v1` | 1/5 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Audio Intelligence `v1` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Voice Agents `v1` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **Total** | **12/35** | **35/35** | **35/35** | **35/35** | **35/35** | **0/35** | **0/35** |
+| **Tests** | — | — | — | — | — | — | ✅ |
 <!-- recipes-table-end -->
 
 ## Agent schedules
 
 | Workflow | Schedule | Purpose |
 |----------|----------|---------|
-| `discover-sdks` | Every hour at :07 | Find coverage gaps → create `queue:generate` issues |
-| `process-queue` | Every hour at :27 | Pick up queue issues → generate recipes → open PRs |
-| `review-sdk-changes` | Saturdays 08:17 UTC | Check SDK release notes for new features and API changes |
-| `update-coverage` | On PR merge + every 6 h | Rebuild `COVERAGE.md` and per-language READMEs |
-| `reconcile-index` | Daily 11:45 UTC | Verify README counts; flag incomplete recipe directories |
+| `pm` | Every hour at :07 | Find coverage gaps → create `queue:generate` issues |
+| `engineer` | Every hour at :27 | Pick up queue issues → generate recipes → open PRs |
+| `researcher` | Saturdays 08:17 UTC | Check SDK release notes for new features and API changes |
+| `lead-coverage` | On PR merge + every 6 h | Rebuild `COVERAGE.md` and per-language READMEs |
+| `lead-reconcile` | Daily 11:45 UTC | Verify README counts; flag incomplete recipe directories |
 
 ## Setup
 
@@ -163,8 +87,8 @@ recipes/{language}/{product}/{version}/{recipe}/
 
 ```bash
 # Requires: ANTHROPIC_API_KEY set, DEEPGRAM_API_KEY set, gh auth login, git configured
-claude --model claude-opus-4-6 -p "$(cat instructions/discover-sdks.md)"
-claude --model claude-opus-4-6 -p "$(cat instructions/process-queue.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/pm.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/engineer.md)"
 ```
 
 See [instructions/README.md](instructions/README.md) for all available instructions.

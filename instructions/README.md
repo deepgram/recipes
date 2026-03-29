@@ -9,11 +9,11 @@ automatically via a GitHub Actions workflow or manually from your local machine.
 
 | File | Triggered By | What It Does |
 |------|-------------|--------------|
-| `discover-sdks.md` | Every hour at :07 | Scans `recipes/` for coverage gaps and creates `queue:generate` issues for missing recipes. Also detects new Deepgram SDK repos not yet tracked. |
-| `process-queue.md` | Every hour at :27, on issue events | Routes open `type:queue` issues. Executes `generate-examples.md` for `action:generate` issues; surfaces `action:new-sdk` issues for human review. |
+| `pm.md` | Every hour at :07 | Scans `recipes/` for coverage gaps and creates `queue:generate` issues for missing recipes. Also detects new Deepgram SDK repos not yet tracked. |
+| `engineer.md` | Every hour at :27, on issue events | Routes open `type:queue` issues. Executes `generate-examples.md` for `action:generate` issues; surfaces `action:new-sdk` issues for human review. |
 | `generate-examples.md` | Triggered by queue issues | Generates runnable recipe files (`example.*`, `example_test.*`, `README.md`) for a language/product combination. Opens a PR and closes the queue issue. |
-| `update-coverage.md` | On PR merge to main | Rebuilds `COVERAGE.md` and per-language/per-product README files to reflect the current state of `recipes/`. |
-| `reconcile-index.md` | Daily at 11:45 UTC | Verifies the root `README.md` count table is accurate. Creates `queue:fix` issues for sample directories missing required files. |
+| `lead-coverage.md` | On PR merge to main | Rebuilds `COVERAGE.md` and per-language/per-product README files to reflect the current state of `recipes/`. |
+| `lead-reconcile.md` | Daily at 11:45 UTC | Verifies the root `README.md` count table is accurate. Creates `queue:fix` issues for sample directories missing required files. |
 
 ## How to Run Locally
 
@@ -27,19 +27,19 @@ claude --model claude-opus-4-6 -p "$(cat instructions/{name}.md)"
 
 ```bash
 # Check for coverage gaps and create queue issues
-claude --model claude-opus-4-6 -p "$(cat instructions/discover-sdks.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/pm.md)"
 
 # Process the oldest pending queue issue
-claude --model claude-opus-4-6 -p "$(cat instructions/process-queue.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/engineer.md)"
 
 # Generate examples from a queue issue
 claude --model claude-opus-4-6 -p "$(cat instructions/generate-examples.md)"
 
 # Rebuild coverage documentation after merging samples
-claude --model claude-opus-4-6 -p "$(cat instructions/update-coverage.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/lead-coverage.md)"
 
 # Reconcile the index and check for missing files
-claude --model claude-opus-4-6 -p "$(cat instructions/reconcile-index.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/lead-reconcile.md)"
 ```
 
 ## Design Principles
@@ -59,13 +59,13 @@ chain is silently broken.
 **Every downstream workflow has a cron fallback for this reason:**
 
 ```
-discover-sdks (cron :07)
+pm (cron :07)
   └─ creates queue:generate issues
-       └─ process-queue (cron :27) ← cron fires even when issues were created by a workflow
+       └─ engineer (cron :27) ← cron fires even when issues were created by a workflow
             └─ merges recipe PRs
-                 └─ update-coverage (cron every 6h) ← cron fires even when PR was merged by workflow
+                 └─ lead-coverage (cron every 6h) ← cron fires even when PR was merged by workflow
 ```
 
-`reconcile-index` (daily) is the final safety net — catches any drift the other workflows missed.
+`lead-reconcile` (daily) is the final safety net — catches any drift the other workflows missed.
 
 When adding new downstream workflows, always include a cron trigger.

@@ -3,3 +3,6 @@ contact_links:
   - name: Deepgram Documentation
     url: https://developers.deepgram.com
     about: Official Deepgram developer documentation
+  - name: Suggest a recipe
+    url: https://github.com/deepgram/recipes/issues/new?template=suggestion.yml
+    about: Suggest a new recipe idea
