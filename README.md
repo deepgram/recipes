@@ -63,7 +63,7 @@ samples/{language}/{product}/{version}/{recipe}/
 4. Set `KAPA_PROJECT_ID` as a repository variable: `1908afc6-c134-4c6f-a684-ed7d8ce91759`
 5. Run **Actions → Setup Labels → Run workflow** once to create all issue labels
 6. Enable **auto-merge**: Settings → General → Pull Requests → Allow auto-merge
-7. Set **branch protection** on `main`: require status checks, add all 7 `test-*` workflows as required checks (GitHub only enforces a check when it actually runs, so PRs that touch only Python files will only gate on `test-python`)
+7. Set **branch protection** on `main`: require status checks → add **`E2E / test`** as the required check — this runs on every PR, makes real API calls, and is the gate for auto-merge. The per-language `test-*` workflows also run when their files change but are not required (they fail-fast and block human review if broken)
 
 `GITHUB_TOKEN` is provided automatically by GitHub Actions.
 
