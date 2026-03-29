@@ -15,15 +15,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for recipe code changes
+        id: changes
+        run: |
+          git fetch origin main --quiet
+          CHANGED=$(git diff origin/main...HEAD --name-only 2>/dev/null || git diff HEAD~1 --name-only)
+          echo "Changed files:"
+          echo "$CHANGED"
+          if echo "$CHANGED" | grep -qE '^recipes/|^tests/'; then
+            echo "has_code=true" >> $GITHUB_OUTPUT
+            echo "Recipe code changed — running API tests"
+          else
+            echo "has_code=false" >> $GITHUB_OUTPUT
+            echo "Docs-only change — skipping API tests"
+          fi
 
       - uses: actions/setup-python@v5
+        if: steps.changes.outputs.has_code == 'true'
         with:
           python-version: '3.12'
 
       - name: Install SDK
+        if: steps.changes.outputs.has_code == 'true'
         run: pip install "deepgram-sdk>=6.0.0" pytest
 
       - name: Run E2E tests
+        if: steps.changes.outputs.has_code == 'true'
         run: pytest tests/e2e.py -v
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}

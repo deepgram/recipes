@@ -48,7 +48,7 @@ recipes/{language}/{product}/{version}/{recipe}/
 ## Recipes
 
 <!-- recipes-table-start -->
-*82 recipes · last updated 2026-03-29 16:51 UTC*
+*82 recipes · last updated 2026-03-29 18:55 UTC*
 
 | Recipe | Language | Product | Version | Files | Tests |
 |--------|----------|---------|---------|-------|-------|
