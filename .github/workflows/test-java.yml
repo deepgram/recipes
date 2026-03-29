@@ -1,0 +1,51 @@
+name: Test Java Samples
+
+on:
+  pull_request:
+    paths:
+      - 'samples/java/**'
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Check for examples
+        id: check
+        run: |
+          if find samples/java -name "ExampleTest.java" 2>/dev/null | grep -q .; then
+            echo "has_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_tests=false" >> $GITHUB_OUTPUT
+            echo "No Java examples found, skipping tests"
+          fi
+
+      - name: Install dependencies
+        if: steps.check.outputs.has_tests == 'true'
+        run: |
+          find samples/java -name "pom.xml" | while read pom; do
+            dir=$(dirname "$pom")
+            echo "Installing dependencies for: $pom"
+            mvn -f "$pom" install -DskipTests --no-transfer-progress
+          done
+
+      - name: Run tests
+        if: steps.check.outputs.has_tests == 'true'
+        run: |
+          find samples/java -name "pom.xml" | while read pom; do
+            echo "Running tests for: $pom"
+            mvn -f "$pom" test --no-transfer-progress
+          done
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15

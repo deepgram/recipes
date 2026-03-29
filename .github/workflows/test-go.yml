@@ -1,0 +1,41 @@
+name: Test Go Samples
+
+on:
+  pull_request:
+    paths:
+      - 'samples/go/**'
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Check for examples
+        id: check
+        run: |
+          if find samples/go -name "example_test.go" 2>/dev/null | grep -q .; then
+            echo "has_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_tests=false" >> $GITHUB_OUTPUT
+            echo "No Go examples found, skipping tests"
+          fi
+
+      - name: Install dependencies
+        if: steps.check.outputs.has_tests == 'true'
+        run: cd samples/go && go mod download
+
+      - name: Run tests
+        if: steps.check.outputs.has_tests == 'true'
+        run: cd samples/go && go test ./... -v -timeout 120s
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15

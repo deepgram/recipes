@@ -1,0 +1,302 @@
+{
+  "products": {
+    "speech-to-text": {
+      "slug": "speech-to-text",
+      "name": "Speech-to-Text",
+      "description": "Audio transcription (pre-recorded and streaming)",
+      "versions": {
+        "v1": {
+          "description": "All models: nova-3, nova-2, nova, enhanced, base",
+          "recipes": [
+            {
+              "slug": "transcribe-url",
+              "name": "Transcribe Audio from URL",
+              "category": "operations",
+              "description": "Send a URL to a hosted audio file for transcription",
+              "params": {}
+            },
+            {
+              "slug": "transcribe-file",
+              "name": "Transcribe Local Audio File",
+              "category": "operations",
+              "description": "Read a local audio file and send for transcription",
+              "params": {}
+            },
+            {
+              "slug": "smart-format",
+              "name": "Smart Format",
+              "category": "features",
+              "description": "Automatically format output: numbers, dates, currencies, addresses",
+              "params": {"smart_format": true}
+            },
+            {
+              "slug": "punctuate",
+              "name": "Punctuation",
+              "category": "features",
+              "description": "Add punctuation to transcript",
+              "params": {"punctuate": true}
+            },
+            {
+              "slug": "paragraphs",
+              "name": "Paragraphs",
+              "category": "features",
+              "description": "Group transcript into paragraph blocks based on speech pauses",
+              "params": {"paragraphs": true}
+            },
+            {
+              "slug": "utterances",
+              "name": "Utterances",
+              "category": "features",
+              "description": "Split transcript into per-utterance segments with timing",
+              "params": {"utterances": true}
+            },
+            {
+              "slug": "diarize",
+              "name": "Speaker Diarization",
+              "category": "features",
+              "description": "Identify and label individual speakers in audio",
+              "params": {"diarize": true}
+            },
+            {
+              "slug": "multichannel",
+              "name": "Multichannel",
+              "category": "features",
+              "description": "Transcribe each audio channel independently",
+              "params": {"multichannel": true}
+            },
+            {
+              "slug": "detect-language",
+              "name": "Language Detection",
+              "category": "features",
+              "description": "Automatically detect the spoken language",
+              "params": {"detect_language": true}
+            },
+            {
+              "slug": "summarize",
+              "name": "Summarize",
+              "category": "features",
+              "description": "Generate a concise summary of the transcript",
+              "params": {"summarize": "v2"}
+            },
+            {
+              "slug": "topics",
+              "name": "Topic Detection",
+              "category": "features",
+              "description": "Identify topics discussed in the audio",
+              "params": {"topics": true}
+            },
+            {
+              "slug": "intents",
+              "name": "Intent Recognition",
+              "category": "features",
+              "description": "Detect speaker intents in the transcript",
+              "params": {"intents": true}
+            },
+            {
+              "slug": "sentiment",
+              "name": "Sentiment Analysis",
+              "category": "features",
+              "description": "Analyze sentiment (positive/negative/neutral) per segment",
+              "params": {"sentiment": true}
+            },
+            {
+              "slug": "detect-entities",
+              "name": "Entity Detection",
+              "category": "features",
+              "description": "Identify named entities: people, places, organisations",
+              "params": {"detect_entities": true}
+            },
+            {
+              "slug": "redact",
+              "name": "Redaction",
+              "category": "features",
+              "description": "Redact sensitive information (PCI, PII, SSNs) from transcript",
+              "params": {"redact": ["pci", "ssn"]}
+            },
+            {
+              "slug": "search",
+              "name": "Search",
+              "category": "features",
+              "description": "Find specific words or phrases in audio with confidence scores",
+              "params": {"search": ["Deepgram", "AI"]}
+            },
+            {
+              "slug": "keywords",
+              "name": "Keyword Boosting",
+              "category": "features",
+              "description": "Boost accuracy for specific keywords or proper nouns",
+              "params": {"keywords": ["Deepgram:2", "nova:1.5"]}
+            },
+            {
+              "slug": "streaming",
+              "name": "Live Streaming Transcription",
+              "category": "operations",
+              "description": "WebSocket-based real-time transcription from live audio",
+              "params": {"interim_results": true, "smart_format": true}
+            },
+            {
+              "slug": "streaming-file",
+              "name": "Stream Audio File for Transcription",
+              "category": "operations",
+              "description": "Stream a local audio file over WebSocket for transcription",
+              "params": {}
+            }
+          ]
+        },
+        "v2": {
+          "description": "flux-general-en: English-only, high-accuracy streaming model",
+          "recipes": [
+            {
+              "slug": "transcribe-url",
+              "name": "Transcribe Audio from URL (v2)",
+              "category": "operations",
+              "description": "Use the v2 API for English audio transcription",
+              "params": {"model": "flux-general-en"}
+            },
+            {
+              "slug": "streaming",
+              "name": "Live Streaming Transcription (v2)",
+              "category": "operations",
+              "description": "WebSocket streaming with the v2/listen endpoint",
+              "params": {"model": "flux-general-en"}
+            }
+          ]
+        }
+      }
+    },
+    "text-to-speech": {
+      "slug": "text-to-speech",
+      "name": "Text-to-Speech",
+      "description": "Generate natural-sounding audio from text",
+      "versions": {
+        "v1": {
+          "description": "aura-2 voices (primary) and legacy aura voices",
+          "recipes": [
+            {
+              "slug": "generate-audio",
+              "name": "Generate Audio to File",
+              "category": "operations",
+              "description": "Convert text to audio and save as a file",
+              "params": {"model": "aura-2-thalia-en"}
+            },
+            {
+              "slug": "stream-audio",
+              "name": "Stream Audio Response",
+              "category": "operations",
+              "description": "Stream TTS audio as it generates (REST streaming)",
+              "params": {"model": "aura-2-thalia-en", "encoding": "linear16"}
+            },
+            {
+              "slug": "websocket-streaming",
+              "name": "WebSocket Streaming TTS",
+              "category": "operations",
+              "description": "Low-latency TTS via WebSocket for real-time use cases",
+              "params": {"model": "aura-2-thalia-en"}
+            },
+            {
+              "slug": "select-model",
+              "name": "Select Voice Model",
+              "category": "features",
+              "description": "Choose from available aura-2 voice models",
+              "params": {"model": "aura-2-arcas-en"}
+            },
+            {
+              "slug": "select-encoding",
+              "name": "Select Audio Encoding",
+              "category": "features",
+              "description": "Choose output audio encoding: linear16, mp3, opus, flac, aac, mulaw",
+              "params": {"encoding": "mp3", "container": "none"}
+            }
+          ]
+        }
+      }
+    },
+    "audio-intelligence": {
+      "slug": "audio-intelligence",
+      "name": "Audio Intelligence",
+      "description": "Intelligence features for audio content analysis",
+      "versions": {
+        "v1": {
+          "description": "Applied via pre-recorded transcription options",
+          "recipes": [
+            {
+              "slug": "summarize",
+              "name": "Audio Summarization",
+              "category": "operations",
+              "description": "Generate a concise text summary of spoken content",
+              "params": {"summarize": "v2", "model": "nova-3"}
+            },
+            {
+              "slug": "sentiment",
+              "name": "Sentiment Analysis",
+              "category": "operations",
+              "description": "Segment-level positive/negative/neutral sentiment scoring",
+              "params": {"sentiment": true, "model": "nova-3"}
+            },
+            {
+              "slug": "topics",
+              "name": "Topic Detection",
+              "category": "operations",
+              "description": "Identify key topics discussed in audio",
+              "params": {"topics": true, "model": "nova-3"}
+            },
+            {
+              "slug": "intents",
+              "name": "Intent Recognition",
+              "category": "operations",
+              "description": "Detect caller/speaker intents from context",
+              "params": {"intents": true, "model": "nova-3"}
+            },
+            {
+              "slug": "entities",
+              "name": "Entity Detection",
+              "category": "operations",
+              "description": "Identify named entities: people, organisations, locations",
+              "params": {"detect_entities": true, "model": "nova-3"}
+            }
+          ]
+        }
+      }
+    },
+    "voice-agents": {
+      "slug": "voice-agents",
+      "name": "Voice Agents",
+      "description": "Real-time conversational voice AI with listen-think-speak pipeline",
+      "versions": {
+        "v1": {
+          "description": "WebSocket-based voice agent API",
+          "recipes": [
+            {
+              "slug": "connect",
+              "name": "Connect to Voice Agent",
+              "category": "operations",
+              "description": "Establish a WebSocket voice agent session with default settings",
+              "params": {}
+            },
+            {
+              "slug": "custom-llm",
+              "name": "Configure LLM Provider",
+              "category": "features",
+              "description": "Use OpenAI or Anthropic as the think model for your agent",
+              "params": {}
+            },
+            {
+              "slug": "custom-tts",
+              "name": "Configure TTS Voice",
+              "category": "features",
+              "description": "Choose a specific aura-2 voice model for agent speech",
+              "params": {}
+            },
+            {
+              "slug": "function-calling",
+              "name": "Function Calling",
+              "category": "features",
+              "description": "Inject tool calls for the LLM to use during a conversation",
+              "params": {}
+            }
+          ]
+        }
+      }
+    }
+  }
+}

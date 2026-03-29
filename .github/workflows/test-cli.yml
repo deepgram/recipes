@@ -1,0 +1,62 @@
+name: Test CLI Samples
+
+on:
+  pull_request:
+    paths:
+      - 'samples/cli/**'
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for examples
+        id: check
+        run: |
+          if find samples/cli -name "example_test.sh" 2>/dev/null | grep -q .; then
+            echo "has_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_tests=false" >> $GITHUB_OUTPUT
+            echo "No CLI examples found, skipping tests"
+          fi
+
+      - name: Install Deepgram CLI
+        if: steps.check.outputs.has_tests == 'true'
+        run: |
+          # Fetch the latest release tag from deepgram/deepgram-cli
+          LATEST_TAG=$(gh api "repos/deepgram/deepgram-cli/releases/latest" --jq '.tag_name' 2>/dev/null || echo "")
+          if [ -z "$LATEST_TAG" ]; then
+            echo "Could not determine latest CLI version, using fallback"
+            LATEST_TAG=$(gh api "repos/deepgram/deepgram-cli/tags" --jq '.[0].name' 2>/dev/null || echo "")
+          fi
+
+          if [ -z "$LATEST_TAG" ]; then
+            echo "ERROR: Could not determine Deepgram CLI version"
+            exit 1
+          fi
+
+          VERSION="${LATEST_TAG#v}"
+          echo "Installing Deepgram CLI version: $VERSION"
+
+          DOWNLOAD_URL="https://github.com/deepgram/deepgram-cli/releases/download/${LATEST_TAG}/deepgram_${VERSION}_linux_amd64.tar.gz"
+          curl -fsSL "$DOWNLOAD_URL" -o deepgram-cli.tar.gz
+          tar -xzf deepgram-cli.tar.gz
+          sudo mv deepgram /usr/local/bin/deepgram
+          deepgram --version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run tests
+        if: steps.check.outputs.has_tests == 'true'
+        run: |
+          find samples/cli -name "example_test.sh" | sort | while read test_file; do
+            echo "Running: $test_file"
+            bash "$test_file"
+          done
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15

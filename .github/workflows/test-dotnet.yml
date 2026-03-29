@@ -1,0 +1,68 @@
+name: Test .NET Samples
+
+on:
+  pull_request:
+    paths:
+      - 'samples/dotnet/**'
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Check for examples
+        id: check
+        run: |
+          if find samples/dotnet -name "ExampleTest.cs" 2>/dev/null | grep -q .; then
+            echo "has_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_tests=false" >> $GITHUB_OUTPUT
+            echo "No .NET examples found, skipping tests"
+          fi
+
+      - name: Check for project files
+        if: steps.check.outputs.has_tests == 'true'
+        id: check_projects
+        run: |
+          csproj_count=$(find samples/dotnet -name "*.csproj" 2>/dev/null | wc -l | tr -d ' ')
+          echo "csproj_count=$csproj_count" >> $GITHUB_OUTPUT
+          if [ "$csproj_count" -eq 0 ]; then
+            echo "No .csproj files found, skipping"
+            echo "has_projects=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_projects=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Restore dependencies
+        if: steps.check.outputs.has_tests == 'true' && steps.check_projects.outputs.has_projects == 'true'
+        run: |
+          find samples/dotnet -name "*.csproj" | while read csproj; do
+            echo "Restoring: $csproj"
+            dotnet restore "$csproj"
+          done
+
+      - name: Run tests
+        if: steps.check.outputs.has_tests == 'true' && steps.check_projects.outputs.has_projects == 'true'
+        run: |
+          find samples/dotnet -name "*.csproj" | while read csproj; do
+            dir=$(dirname "$csproj")
+            # Only run dotnet test on projects that contain test files
+            if find "$dir" -name "ExampleTest.cs" | grep -q .; then
+              echo "Testing: $csproj"
+              dotnet test "$csproj" --verbosity normal
+            else
+              echo "Skipping (no test files): $csproj"
+            fi
+          done
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15

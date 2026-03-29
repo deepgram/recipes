@@ -1,0 +1,49 @@
+name: Queue - Update Existing Recipe
+description: An existing recipe needs updating due to an SDK API change or deprecation
+labels: ["type:queue", "action:update"]
+body:
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - python
+        - javascript
+        - go
+        - dotnet
+        - java
+        - rust
+        - cli
+    validations:
+      required: true
+  - type: input
+    id: recipe
+    attributes:
+      label: Recipe Path
+      description: Path relative to samples/ (e.g. python/speech-to-text/v1/transcribe-url)
+      placeholder: "python/speech-to-text/v1/transcribe-url"
+    validations:
+      required: true
+  - type: input
+    id: sdk-version
+    attributes:
+      label: SDK Version
+      description: The SDK version that introduced the change
+      placeholder: "v4.2.0"
+    validations:
+      required: true
+  - type: textarea
+    id: what-changed
+    attributes:
+      label: What Changed
+      description: Describe the API change — old pattern vs new pattern
+      placeholder: |
+        Old: client.listen.prerecorded.transcribeUrl(...)
+        New: client.listen.rest.v("1").transcribeUrl(...)
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Link to release notes, PR, or migration guide

@@ -1,0 +1,16 @@
+{
+  "name": "deepgram-code-samples-js",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deepgram JavaScript SDK code samples",
+  "type": "module",
+  "scripts": {
+    "test": "find . -name 'example.test.js' | xargs -I {} node --test {}"
+  },
+  "dependencies": {
+    "@deepgram/sdk": "latest"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,40 @@
+name: Test Rust Samples
+
+on:
+  pull_request:
+    paths:
+      - 'samples/rust/**'
+  schedule:
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Check for examples
+        id: check
+        run: |
+          # Check for Cargo.toml files in subdirectories (each recipe is its own crate)
+          if find samples/rust -mindepth 2 -name "Cargo.toml" 2>/dev/null | grep -q .; then
+            echo "has_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_tests=false" >> $GITHUB_OUTPUT
+            echo "No Rust examples found, skipping tests"
+          fi
+
+      - name: Build
+        if: steps.check.outputs.has_tests == 'true'
+        run: cd samples/rust && cargo build --workspace
+
+      - name: Run tests
+        if: steps.check.outputs.has_tests == 'true'
+        run: cd samples/rust && cargo test --workspace -- --test-threads=1
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15

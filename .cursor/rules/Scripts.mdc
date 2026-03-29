@@ -1,7 +1,0 @@
----
-description: Scripts are zero dependency
-globs: /.scripts/**
-alwaysApply: true
----
-
-All our scripts MUST BE zero-dependency Node v22 scripts, created as .mjs files.

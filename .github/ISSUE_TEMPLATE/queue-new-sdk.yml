@@ -1,0 +1,32 @@
+name: Queue - New SDK Discovered
+description: A new Deepgram SDK repository was found - requires human review
+labels: ["type:queue", "action:new-sdk"]
+body:
+  - type: input
+    id: repo
+    attributes:
+      label: Repository
+      description: Full GitHub repository name
+      placeholder: "deepgram/deepgram-kotlin-sdk"
+    validations:
+      required: true
+
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: "e.g. kotlin"
+    validations:
+      required: true
+
+  - type: textarea
+    id: action
+    attributes:
+      label: Action Required
+      description: What should be done to add this SDK to the tracking system
+      value: |
+        1. Verify this is an official Deepgram SDK
+        2. Add an entry to `.deepgram/sdks.json` with all required fields
+        3. Create a `samples/{language}/` directory with appropriate manifest file
+        4. Create a `test-{language}.yml` workflow
+        5. Close this issue when done

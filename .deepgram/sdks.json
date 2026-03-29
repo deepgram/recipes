@@ -1,0 +1,102 @@
+{
+  "sdks": [
+    {
+      "name": "Python SDK",
+      "language": "python",
+      "slug": "python",
+      "repo": "deepgram/deepgram-python-sdk",
+      "file_extension": "py",
+      "test_file": "example_test.py",
+      "install_command": "pip install -r requirements.txt",
+      "run_command": "python example.py",
+      "test_command": "pytest example_test.py -v --timeout=60",
+      "package_manager": "pip",
+      "sdk_package": "deepgram-sdk",
+      "sdk_import": "from deepgram import DeepgramClient"
+    },
+    {
+      "name": "JavaScript SDK",
+      "language": "javascript",
+      "slug": "javascript",
+      "repo": "deepgram/deepgram-js-sdk",
+      "file_extension": "js",
+      "test_file": "example.test.js",
+      "install_command": "npm install",
+      "run_command": "node example.js",
+      "test_command": "node --test example.test.js",
+      "package_manager": "npm",
+      "sdk_package": "@deepgram/sdk",
+      "sdk_import": "import { createClient } from \"@deepgram/sdk\";"
+    },
+    {
+      "name": "Go SDK",
+      "language": "go",
+      "slug": "go",
+      "repo": "deepgram/deepgram-go-sdk",
+      "file_extension": "go",
+      "test_file": "example_test.go",
+      "install_command": "go mod download",
+      "run_command": "go run example.go",
+      "test_command": "go test ./... -v -timeout 60s",
+      "package_manager": "go",
+      "sdk_package": "github.com/deepgram/deepgram-go-sdk/v3",
+      "sdk_import": "import \"github.com/deepgram/deepgram-go-sdk/v3\""
+    },
+    {
+      "name": ".NET SDK",
+      "language": "dotnet",
+      "slug": "dotnet",
+      "repo": "deepgram/deepgram-dotnet-sdk",
+      "file_extension": "cs",
+      "test_file": "ExampleTest.cs",
+      "install_command": "dotnet restore",
+      "run_command": "dotnet run",
+      "test_command": "dotnet test",
+      "package_manager": "nuget",
+      "sdk_package": "Deepgram",
+      "sdk_import": "using Deepgram;"
+    },
+    {
+      "name": "Java SDK",
+      "language": "java",
+      "slug": "java",
+      "repo": "deepgram/deepgram-java-sdk",
+      "file_extension": "java",
+      "test_file": "ExampleTest.java",
+      "install_command": "mvn install -DskipTests",
+      "run_command": "mvn exec:java",
+      "test_command": "mvn test",
+      "package_manager": "maven",
+      "sdk_package": "com.deepgram.sdk",
+      "sdk_import": "import com.deepgram.sdk.Deepgram;"
+    },
+    {
+      "name": "Rust SDK",
+      "language": "rust",
+      "slug": "rust",
+      "repo": "deepgram/deepgram-rust-sdk",
+      "file_extension": "rs",
+      "test_file": "src/main.rs",
+      "install_command": "cargo build",
+      "run_command": "cargo run",
+      "test_command": "cargo test -- --test-threads=1",
+      "package_manager": "cargo",
+      "sdk_package": "deepgram",
+      "sdk_import": "use deepgram::Deepgram;"
+    },
+    {
+      "name": "CLI",
+      "language": "cli",
+      "slug": "cli",
+      "repo": "deepgram/deepgram-cli",
+      "file_extension": "sh",
+      "test_file": "example_test.sh",
+      "install_command": "# Install Deepgram CLI: https://github.com/deepgram/deepgram-cli",
+      "run_command": "bash example.sh",
+      "test_command": "bash example_test.sh",
+      "package_manager": "homebrew",
+      "sdk_package": "deepgram/tap/deepgram",
+      "sdk_import": "deepgram"
+    }
+  ]
+}

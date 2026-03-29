@@ -1,0 +1,45 @@
+name: Setup Labels
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/setup-labels.yml'
+  workflow_dispatch:
+
+jobs:
+  setup-labels:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          # Queue / action type labels
+          gh label create "type:queue"    --color "e4e669" --description "Issue is in the automation queue" --force
+          gh label create "type:samples"  --color "0075ca" --description "Pull request adds or updates code samples" --force
+          gh label create "action:generate" --color "d93f0b" --description "Queue action: generate code examples" --force
+          gh label create "action:update"   --color "e99695" --description "Queue action: update existing recipe for SDK changes" --force
+          gh label create "action:new-sdk"  --color "e4e669" --description "Queue action: new SDK discovered, needs human review" --force
+          gh label create "action:fix"      --color "d93f0b" --description "Queue action: fix incomplete recipe directory" --force
+
+          # Language labels
+          gh label create "language:python"     --color "3572A5" --description "Python samples" --force
+          gh label create "language:javascript" --color "f1e05a" --description "JavaScript samples" --force
+          gh label create "language:go"         --color "00ADD8" --description "Go samples" --force
+          gh label create "language:dotnet"     --color "178600" --description ".NET samples" --force
+          gh label create "language:java"       --color "b07219" --description "Java samples" --force
+          gh label create "language:rust"       --color "dea584" --description "Rust samples" --force
+          gh label create "language:cli"        --color "89e051" --description "CLI samples" --force
+
+          # Product labels
+          gh label create "product:speech-to-text"     --color "0075ca" --description "Speech-to-Text (STT) samples" --force
+          gh label create "product:text-to-speech"     --color "0075ca" --description "Text-to-Speech (TTS) samples" --force
+          gh label create "product:audio-intelligence" --color "0075ca" --description "Audio Intelligence samples" --force
+          gh label create "product:voice-agents"       --color "0075ca" --description "Voice Agents samples" --force
+
+          echo "All labels created successfully."

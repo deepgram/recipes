@@ -1,0 +1,44 @@
+name: Queue - Generate Examples
+description: Queue example generation for a specific language and product
+labels: ["type:queue", "action:generate"]
+body:
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - python
+        - javascript
+        - go
+        - dotnet
+        - java
+        - rust
+        - cli
+    validations:
+      required: true
+
+  - type: dropdown
+    id: product
+    attributes:
+      label: Product
+      description: Which product to generate recipes for (leave as "all" to cover all gaps)
+      options:
+        - all
+        - speech-to-text
+        - text-to-speech
+        - audio-intelligence
+        - voice-agents
+      default: 0
+
+  - type: input
+    id: sdk-version
+    attributes:
+      label: SDK Version
+      description: Latest SDK version (optional, used for tracking)
+      placeholder: "e.g. v4.1.0"
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Any additional context
