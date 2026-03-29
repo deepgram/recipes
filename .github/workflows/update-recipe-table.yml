@@ -1,0 +1,124 @@
+name: Update Recipe Table
+
+on:
+  schedule:
+    - cron: '37 * * * *'  # Every hour at :37
+  workflow_dispatch:
+
+concurrency:
+  group: update-recipe-table
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "recipes-bot"
+          git config user.email "noreply@deepgram.com"
+
+      - name: Build recipe table
+        id: build
+        run: |
+          # ── Helper: last test-{lang} run conclusion on main ──────────────
+          test_status() {
+            local lang="$1"
+            local conclusion
+            conclusion=$(gh run list \
+              --workflow "test-${lang}.yml" \
+              --branch main \
+              --limit 1 \
+              --json conclusion \
+              --jq '.[0].conclusion // "none"' 2>/dev/null || echo "none")
+            case "$conclusion" in
+              success) echo "✅ passing" ;;
+              failure) echo "❌ failing" ;;
+              *)       echo "— no run"  ;;
+            esac
+          }
+
+          # ── Scan recipes/ directory ───────────────────────────────────────
+          declare -A lang_status
+          TABLE_ROWS=""
+          COUNT=0
+
+          while IFS= read -r example_file; do
+            dir=$(dirname "$example_file")
+            # Expected: recipes/{language}/{product}/{version}/{recipe}
+            IFS='/' read -r _ language product version recipe <<< "$dir"
+            [ -z "$recipe" ] && continue
+
+            # Cache test status per language
+            if [ -z "${lang_status[$language]+x}" ]; then
+              lang_status[$language]=$(test_status "$language")
+            fi
+            status="${lang_status[$language]}"
+
+            # Check all three required files exist
+            ext="${example_file##*.}"
+            has_test="❌"
+            has_readme="❌"
+            [ -n "$(find "$dir" -maxdepth 1 -name "example_test.*" 2>/dev/null)" ] && has_test="✅"
+            [ -f "$dir/README.md" ] && has_readme="✅"
+            files="${has_test} ${has_readme}"
+
+            # Capitalise language for display
+            lang_display="${language^}"
+            [ "$language" = "dotnet" ] && lang_display=".NET"
+            [ "$language" = "cli"    ] && lang_display="CLI"
+            [ "$language" = "javascript" ] && lang_display="JavaScript"
+
+            TABLE_ROWS="${TABLE_ROWS}| [${recipe}]($dir/) | ${lang_display} | ${product} | ${version} | ${files} | ${status} |\n"
+            COUNT=$((COUNT + 1))
+          done < <(find recipes -name "example.*" ! -name "*_test*" ! -name "*.mod" \
+                      ! -name "*.json" ! -name "*.toml" 2>/dev/null | sort)
+
+          # ── Assemble full table ───────────────────────────────────────────
+          UPDATED=$(date -u '+%Y-%m-%d %H:%M UTC')
+          TABLE="*${COUNT} recipes · last updated ${UPDATED}*\n\n"
+          TABLE+="| Recipe | Language | Product | Version | Files | Tests |\n"
+          TABLE+="|--------|----------|---------|---------|-------|-------|\n"
+          TABLE+="$TABLE_ROWS"
+
+          # ── Inject into README between markers ───────────────────────────
+          python3 - <<PYEOF
+          import re, sys
+          content = open('README.md').read()
+          block = r'<!-- recipes-table-start -->.*?<!-- recipes-table-end -->'
+          replacement = '<!-- recipes-table-start -->\n${TABLE}\n<!-- recipes-table-end -->'
+          new = re.sub(block, replacement, content, flags=re.DOTALL)
+          if new == content:
+              print('no-change')
+              sys.exit(0)
+          open('README.md', 'w').write(new)
+          print('changed')
+          PYEOF
+
+      - name: Open PR if README changed
+        run: |
+          if ! git diff --quiet README.md; then
+            BRANCH="chore/recipe-table-$(date +%Y%m%d-%H%M)"
+            git checkout -b "$BRANCH"
+            git add README.md
+            git commit -m "docs: update recipe table"
+            git push origin "$BRANCH"
+            PR_URL=$(gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "docs: update recipe table" \
+              --body "Automated hourly update of the recipe coverage table in README.md.")
+            gh pr merge "$PR_URL" --auto --squash
+          else
+            echo "README unchanged — nothing to do."
+          fi

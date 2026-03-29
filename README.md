@@ -45,6 +45,12 @@ samples/{language}/{product}/{version}/{recipe}/
 | Audio Intelligence | v1 | summarize, sentiment, topics, intents, entities |
 | Voice Agents | v1 | connect, custom-llm, custom-tts, function-calling |
 
+## Recipes
+
+<!-- recipes-table-start -->
+*Run the workflow manually or wait for the hourly cron to populate this table.*
+<!-- recipes-table-end -->
+
 ## Agent schedules
 
 | Workflow | Schedule | Purpose |
