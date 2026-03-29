@@ -1,4 +1,4 @@
-# dx-recipes: Claude Code Instructions
+# recipes: Claude Code Instructions
 
 ## What this repository is
 

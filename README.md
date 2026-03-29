@@ -1,4 +1,4 @@
-# dx-recipes
+# recipes
 
 Agent-maintained recipes showing how to use every Deepgram SDK feature across every supported language.
 
