@@ -104,7 +104,10 @@ To onboard this SDK:
      "manifest": "{appropriate manifest filename}"
    }
 4. Create the samples/{language}/ directory with an appropriate manifest file
-5. Copy an existing test-{language}.yml workflow as a template and adapt it
+5. Manually create a `test-{language}.yml` workflow — this CANNOT be done by an agent.
+   Workflow files require the `workflows` GitHub token scope, which is not available to
+   automated runs. The workflow also will not take effect until it is merged into main.
+   A human must add this file via a separate PR.
 6. Close the issue once onboarding is complete
 
 No automated action has been taken. Human review is required.

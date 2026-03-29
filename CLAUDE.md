@@ -56,6 +56,16 @@ Types: feat, fix, docs, style, refactor, test, chore
 
 Never add Co-Authored-By lines for Claude Code.
 
+## Never touch .github/workflows/
+
+Agents running inside GitHub Actions CANNOT create or modify files in `.github/workflows/`:
+- `GITHUB_TOKEN` does not have the `workflows` scope
+- Even if bypassed, workflow file changes do not trigger CI until after they are merged
+- New test workflows for new SDKs must be added manually by a human in a separate PR
+
+When onboarding a new SDK, create the `samples/{language}/` directory and `sdks.json` entry,
+then note in the queue issue that a human needs to add the test workflow.
+
 ## Never commit
 
 - `.env` files or files containing API keys
