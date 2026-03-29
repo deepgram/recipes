@@ -1,11 +1,11 @@
-name: Test JavaScript Samples
+name: Lead — Test Go
 
 on:
   pull_request:
     paths:
-      - 'recipes/javascript/**'
+      - 'recipes/go/**'
   schedule:
-    - cron: '0 7 * * *'
+    - cron: '0 8 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -18,28 +18,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          node-version: '20'
+          go-version: '1.22'
 
       - name: Check for examples
         id: check
         run: |
-          if find recipes/javascript -name "example.test.js" 2>/dev/null | grep -q .; then
+          if find recipes/go -name "example_test.go" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
-            echo "No JavaScript examples found, skipping tests"
+            echo "No Go examples found, skipping tests"
           fi
 
       - name: Install dependencies
         if: steps.check.outputs.has_tests == 'true'
-        run: cd recipes/javascript && npm install
+        run: cd recipes/go && go mod download
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: cd recipes/javascript && npm test
+        run: cd recipes/go && go test ./... -v -timeout 120s
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15

@@ -1,11 +1,11 @@
-name: Test Go Samples
+name: Lead — Test CLI
 
 on:
   pull_request:
     paths:
-      - 'recipes/go/**'
+      - 'recipes/cli/**'
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 12 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -18,28 +18,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-
       - name: Check for examples
         id: check
         run: |
-          if find recipes/go -name "example_test.go" 2>/dev/null | grep -q .; then
+          if find recipes/cli -name "example_test.sh" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
-            echo "No Go examples found, skipping tests"
+            echo "No CLI examples found, skipping tests"
           fi
 
-      - name: Install dependencies
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Deepgram CLI
         if: steps.check.outputs.has_tests == 'true'
-        run: cd recipes/go && go mod download
+        run: pip install deepctl
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: cd recipes/go && go test ./... -v -timeout 120s
+        run: |
+          find recipes/cli -name "example_test.sh" | sort | while read test_file; do
+            echo "Running: $test_file"
+            bash "$test_file"
+          done
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15

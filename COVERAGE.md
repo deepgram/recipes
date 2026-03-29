@@ -80,5 +80,5 @@ Last updated: 2026-03-29
 ## Notes
 
 - ✅ = Example exists in `recipes/{language}/`
-- ❌ = Not yet generated (run `discover-sdks` to queue generation)
+- ❌ = Not yet generated (run `pm` to queue generation)
 - Coverage auto-updates on every PR merge to `main`

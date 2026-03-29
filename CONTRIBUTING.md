@@ -2,7 +2,7 @@
 
 ## Automatic generation
 
-This repository is self-evolving. The `discover-sdks.yml` workflow checks for coverage gaps every hour and creates queue issues that trigger example generation.
+This repository is self-evolving. The `pm.yml` workflow checks for coverage gaps every hour and creates queue issues that trigger example generation.
 
 To trigger generation manually:
 1. Go to Actions → "Process Queue" → "Run workflow"

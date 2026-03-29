@@ -1,4 +1,4 @@
-name: Test .NET Samples
+name: Lead — Test .NET
 
 on:
   pull_request:

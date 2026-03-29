@@ -1,4 +1,4 @@
-name: Update Recipe Table
+name: PM — Dashboard
 
 on:
   schedule:

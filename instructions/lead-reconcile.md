@@ -201,7 +201,7 @@ README counts are accurate. No commit needed.
 ## Step 7: Output a Summary Report
 
 ```
-=== reconcile-index run complete ===
+=== lead-reconcile run complete ===
 
 Languages checked: python, javascript, go, dotnet, java, rust, cli
 README count table: {accurate | updated}

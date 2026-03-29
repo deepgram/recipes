@@ -214,7 +214,7 @@ Only create the issue if none of the existing titles mention this repo name.
 After processing all SDKs, print a summary report:
 
 ```
-=== discover-sdks run complete ===
+=== pm run complete ===
 
 SDKs checked: {N}
 Queue issues created: {N}

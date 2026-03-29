@@ -1,12 +1,12 @@
-name: Review SDK Changes
+name: Lead — Reconcile
 
 on:
   schedule:
-    - cron: '17 8 * * 6'  # Every Saturday at 08:17 UTC
+    - cron: '45 11 * * *'
   workflow_dispatch:
 
 concurrency:
-  group: review-sdk-changes-${{ github.ref }}
+  group: lead-reconcile-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
           git config user.name "recipes-bot"
           git config user.email "noreply@deepgram.com"
 
-      - name: Review SDK changes
+      - name: Run instruction
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -35,8 +35,5 @@ jobs:
           mode: agent
           model: claude-opus-4-6
           allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
-          timeout_minutes: 25
-          direct_prompt: "Read and execute instructions/review-sdk-changes.md"
-        env:
-          KAPA_API_KEY: ${{ secrets.KAPA_API_KEY }}
-          KAPA_PROJECT_ID: ${{ vars.KAPA_PROJECT_ID }}
+          timeout_minutes: 10
+          direct_prompt: "Read and execute instructions/lead-reconcile.md"

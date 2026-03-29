@@ -796,7 +796,7 @@ gh pr merge --auto --squash --subject "feat({language}): add {product} {version}
 
 # Bot-created PRs do not fire pull_request events (GitHub blocks workflow→workflow chains).
 # Explicitly trigger the E2E check on this branch so the required status check runs.
-gh workflow run e2e.yml --ref "$BRANCH"
+gh workflow run lead-e2e.yml --ref "$BRANCH"
 ```
 
 The E2E check will run on the branch. When it passes the PR auto-merges.

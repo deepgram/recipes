@@ -1,16 +1,12 @@
-name: Process Queue
+name: Researcher
 
 on:
   schedule:
-    - cron: '27 * * * *'
-  issues:
-    types:
-      - opened
-      - labeled
+    - cron: '17 8 * * 6'  # Every Saturday at 08:17 UTC
   workflow_dispatch:
 
 concurrency:
-  group: process-queue-${{ github.ref }}
+  group: researcher-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -19,7 +15,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      actions: write
       issues: write
       id-token: write
     steps:
@@ -32,7 +27,7 @@ jobs:
           git config user.name "recipes-bot"
           git config user.email "noreply@deepgram.com"
 
-      - name: Run instruction
+      - name: Review SDK changes
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -40,8 +35,8 @@ jobs:
           mode: agent
           model: claude-opus-4-6
           allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
-          timeout_minutes: 45
-          direct_prompt: "Read and execute instructions/process-queue.md"
+          timeout_minutes: 25
+          direct_prompt: "Read and execute instructions/researcher.md"
         env:
           KAPA_API_KEY: ${{ secrets.KAPA_API_KEY }}
           KAPA_PROJECT_ID: ${{ vars.KAPA_PROJECT_ID }}

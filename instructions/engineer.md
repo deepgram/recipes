@@ -123,7 +123,7 @@ Do not close the issue or add a comment — leave it for the human to handle.
 After processing, output a brief summary:
 
 ```
-=== process-queue run complete ===
+=== engineer run complete ===
 
 Issues checked: {N}
 Action taken: {generate | review-required | skipped | none}

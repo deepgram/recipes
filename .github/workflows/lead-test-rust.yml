@@ -1,11 +1,11 @@
-name: Test CLI Samples
+name: Lead — Test Rust
 
 on:
   pull_request:
     paths:
-      - 'recipes/cli/**'
+      - 'recipes/rust/**'
   schedule:
-    - cron: '0 12 * * *'
+    - cron: '0 11 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -18,31 +18,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Check for examples
         id: check
         run: |
-          if find recipes/cli -name "example_test.sh" 2>/dev/null | grep -q .; then
+          # Check for Cargo.toml files in subdirectories (each recipe is its own crate)
+          if find recipes/rust -mindepth 2 -name "Cargo.toml" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
-            echo "No CLI examples found, skipping tests"
+            echo "No Rust examples found, skipping tests"
           fi
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Deepgram CLI
+      - name: Build
         if: steps.check.outputs.has_tests == 'true'
-        run: pip install deepctl
+        run: cd recipes/rust && cargo build --workspace
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: |
-          find recipes/cli -name "example_test.sh" | sort | while read test_file; do
-            echo "Running: $test_file"
-            bash "$test_file"
-          done
+        run: cd recipes/rust && cargo test --workspace -- --test-threads=1
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15

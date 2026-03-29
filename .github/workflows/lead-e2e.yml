@@ -1,4 +1,4 @@
-name: E2E
+name: Lead — E2E
 
 on:
   pull_request:

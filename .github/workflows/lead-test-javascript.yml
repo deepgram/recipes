@@ -1,11 +1,11 @@
-name: Test Python Samples
+name: Lead — Test JavaScript
 
 on:
   pull_request:
     paths:
-      - 'recipes/python/**'
+      - 'recipes/javascript/**'
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 7 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -18,35 +18,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.12'
+          node-version: '20'
 
       - name: Check for examples
         id: check
         run: |
-          if find recipes/python -name "example_test.py" 2>/dev/null | grep -q .; then
+          if find recipes/javascript -name "example.test.js" 2>/dev/null | grep -q .; then
             echo "has_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_tests=false" >> $GITHUB_OUTPUT
-            echo "No Python examples found, skipping tests"
+            echo "No JavaScript examples found, skipping tests"
           fi
 
       - name: Install dependencies
         if: steps.check.outputs.has_tests == 'true'
-        run: |
-          pip install --upgrade pip
-          if [ -f recipes/python/requirements.txt ]; then
-            pip install -r recipes/python/requirements.txt
-          else
-            echo "No requirements.txt found, installing pytest only"
-            pip install pytest pytest-timeout
-          fi
+        run: cd recipes/javascript && npm install
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
-        run: pytest recipes/python/ -v --timeout=60 -x --import-mode=importlib
+        run: cd recipes/javascript && npm test
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15

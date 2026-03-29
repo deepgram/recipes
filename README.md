@@ -65,11 +65,11 @@ recipes/{language}/{product}/{version}/{recipe}/
 
 | Workflow | Schedule | Purpose |
 |----------|----------|---------|
-| `discover-sdks` | Every hour at :07 | Find coverage gaps → create `queue:generate` issues |
-| `process-queue` | Every hour at :27 | Pick up queue issues → generate recipes → open PRs |
-| `review-sdk-changes` | Saturdays 08:17 UTC | Check SDK release notes for new features and API changes |
-| `update-coverage` | On PR merge + every 6 h | Rebuild `COVERAGE.md` and per-language READMEs |
-| `reconcile-index` | Daily 11:45 UTC | Verify README counts; flag incomplete recipe directories |
+| `pm` | Every hour at :07 | Find coverage gaps → create `queue:generate` issues |
+| `engineer` | Every hour at :27 | Pick up queue issues → generate recipes → open PRs |
+| `researcher` | Saturdays 08:17 UTC | Check SDK release notes for new features and API changes |
+| `lead-coverage` | On PR merge + every 6 h | Rebuild `COVERAGE.md` and per-language READMEs |
+| `lead-reconcile` | Daily 11:45 UTC | Verify README counts; flag incomplete recipe directories |
 
 ## Setup
 
@@ -87,8 +87,8 @@ recipes/{language}/{product}/{version}/{recipe}/
 
 ```bash
 # Requires: ANTHROPIC_API_KEY set, DEEPGRAM_API_KEY set, gh auth login, git configured
-claude --model claude-opus-4-6 -p "$(cat instructions/discover-sdks.md)"
-claude --model claude-opus-4-6 -p "$(cat instructions/process-queue.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/pm.md)"
+claude --model claude-opus-4-6 -p "$(cat instructions/engineer.md)"
 ```
 
 See [instructions/README.md](instructions/README.md) for all available instructions.
