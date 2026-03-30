@@ -47,21 +47,25 @@ jobs:
                           'dotnet':'.NET','java':'Java','rust':'Rust','cli':'CLI'}
           
           actual = {}
+          # Scan only what is on the merged main branch — use git ls-tree to
+          # guarantee we read origin/main, not any local or cached state.
           result = subprocess.run(
-              ['find','recipes','-name','README.md','-mindepth','5','-maxdepth','5'],
+              ['git','ls-tree','-r','--name-only','origin/main'],
               capture_output=True, text=True)
           for path in result.stdout.strip().split('\n'):
-              if not path: continue
-              parts = os.path.dirname(path).split('/')
-              if len(parts) != 5: continue
-              _, lang, product, version, _ = parts
+              if not path.endswith('/README.md'): continue
+              parts = path.split('/')
+              if len(parts) != 6: continue  # recipes/{lang}/{product}/{version}/{slug}/README.md
+              _, lang, product, version, _, _ = parts
               key = (lang, product, version)
               actual[key] = actual.get(key, 0) + 1
-          
+
           def test_status(lang):
+              # Only count test runs from push (merges) or schedule — not PR runs.
               r = subprocess.run(['gh','run','list','--repo','deepgram/recipes',
-                  '--workflow',f'test-{lang}.yml','--branch','main','--limit','1',
-                  '--json','conclusion','--jq','.[0].conclusion'],
+                  '--workflow',f'lead-test-{lang}.yml','--branch','main','--limit','5',
+                  '--json','conclusion,event',
+                  '--jq','[.[] | select(.event == "push" or .event == "schedule")] | .[0].conclusion // "none"'],
                   capture_output=True, text=True, timeout=10)
               c = r.stdout.strip().strip('"')
               return {'success':'✅','failure':'❌'}.get(c,'—')
