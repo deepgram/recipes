@@ -91,7 +91,7 @@
       "repo": "deepgram/cli",
       "file_extension": "sh",
       "test_file": "example_test.sh",
-      "install_command": "pip install deepctl",
+      "install_command": "curl -fsSL https://deepgram.com/install.sh | sh",
       "run_command": "bash example.sh",
       "test_command": "bash example_test.sh",
       "package_manager": "pip",

@@ -34,7 +34,7 @@ jobs:
 
       - name: Install Deepgram CLI
         if: steps.check.outputs.has_tests == 'true'
-        run: pip install deepctl
+        run: curl -fsSL https://deepgram.com/install.sh | sh
 
       - name: Run tests
         if: steps.check.outputs.has_tests == 'true'
