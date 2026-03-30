@@ -253,7 +253,7 @@ else
 fi
 
 # Always re-trigger E2E on the branch (required check for merge)
-gh workflow run lead-e2e.yml --ref pm/docs
+gh workflow run lead-test.yml --ref pm/docs
 ```
 
 ---

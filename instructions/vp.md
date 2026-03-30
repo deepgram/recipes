@@ -77,7 +77,7 @@ gh pr list --state open \
 
 Check which stage each PR is stuck at:
 
-**No E2E check:** trigger `gh workflow run lead-e2e.yml --ref {branch}`
+**No E2E check:** trigger `gh workflow run lead-test.yml --ref {branch}`
 **E2E passed, no review:** trigger `gh workflow run lead-review.yml -f pr_number={N}`
 **review-passed + checks green, not merged:** merge directly via `gh pr merge {N} --squash`
 **fix-needed >4h:** trigger `gh workflow run lead-fix.yml -f pr_number={N}`

@@ -198,7 +198,7 @@ EOF
 gh pr merge --auto --squash --subject "chore: update features.json with new {sdk} features"
 
 # Bot-created PRs do not fire pull_request events — trigger E2E explicitly
-gh workflow run lead-e2e.yml --ref "$BRANCH"
+gh workflow run lead-test.yml --ref "$BRANCH"
 ```
 
 ---

@@ -1,0 +1,276 @@
+name: Lead — Test
+
+# Single workflow covering all recipe languages.
+#
+# detect        — finds which recipes/{language}/ dirs changed in this PR
+# test-python   — pytest with --import-mode=importlib
+# test-javascript — node --test
+# test-go        — go test ./...
+# test-dotnet    — dotnet test (per .csproj)
+# test-java      — mvn test (per pom.xml)
+# test-rust      — cargo test --workspace
+# test-cli       — bash example_test.sh (Deepgram CLI installed via install.sh)
+# e2e-api-check  — REQUIRED GATE: runs real Deepgram API call + validates all jobs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'recipes/**'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or SHA to test'
+        required: false
+        default: ''
+
+concurrency:
+  group: lead-test-${{ github.event.pull_request.number || inputs.ref || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  statuses: write
+
+jobs:
+  # ── Detect which language dirs changed ────────────────────────────────────
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      has_python:     ${{ steps.scan.outputs.has_python }}
+      has_javascript: ${{ steps.scan.outputs.has_javascript }}
+      has_go:         ${{ steps.scan.outputs.has_go }}
+      has_dotnet:     ${{ steps.scan.outputs.has_dotnet }}
+      has_java:       ${{ steps.scan.outputs.has_java }}
+      has_rust:       ${{ steps.scan.outputs.has_rust }}
+      has_cli:        ${{ steps.scan.outputs.has_cli }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+          fetch-depth: 0
+
+      - name: Detect changed languages
+        id: scan
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED=$(git diff origin/main...HEAD --name-only 2>/dev/null | grep '^recipes/' || true)
+          else
+            # workflow_dispatch: treat all languages as changed
+            CHANGED=$(find recipes -mindepth 1 -maxdepth 1 -type d | sed 's|.*/||' | while read l; do echo "recipes/$l/x"; done)
+          fi
+
+          for lang in python javascript go dotnet java rust cli; do
+            if echo "$CHANGED" | grep -q "^recipes/${lang}/"; then
+              echo "has_${lang}=true" >> $GITHUB_OUTPUT
+              echo "✓ $lang recipes changed"
+            else
+              echo "has_${lang}=false" >> $GITHUB_OUTPUT
+            fi
+          done
+
+  # ── Python ────────────────────────────────────────────────────────────────
+  test-python:
+    needs: detect
+    if: needs.detect.outputs.has_python == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r recipes/python/requirements.txt
+      - name: Run Python recipe tests
+        run: pytest recipes/python/ -v --timeout=60 --import-mode=importlib
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15
+
+  # ── JavaScript ────────────────────────────────────────────────────────────
+  test-javascript:
+    needs: detect
+    if: needs.detect.outputs.has_javascript == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: cd recipes/javascript && npm install
+      - name: Run JavaScript recipe tests
+        run: cd recipes/javascript && npm test
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15
+
+  # ── Go ───────────────────────────────────────────────────────────────────
+  test-go:
+    needs: detect
+    if: needs.detect.outputs.has_go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Run Go recipe tests
+        run: cd recipes/go && go mod download && go test ./... -v -timeout 120s
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15
+
+  # ── .NET ─────────────────────────────────────────────────────────────────
+  test-dotnet:
+    needs: detect
+    if: needs.detect.outputs.has_dotnet == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Run .NET recipe tests
+        run: |
+          find recipes/dotnet -name "*.csproj" | while read csproj; do
+            dir=$(dirname "$csproj")
+            if find "$dir" -name "ExampleTest.cs" | grep -q .; then
+              dotnet test "$csproj" --verbosity normal
+            fi
+          done
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15
+
+  # ── Java ─────────────────────────────────────────────────────────────────
+  test-java:
+    needs: detect
+    if: needs.detect.outputs.has_java == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Run Java recipe tests
+        run: |
+          find recipes/java -name "pom.xml" | while read pom; do
+            mvn -f "$pom" test --no-transfer-progress
+          done
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15
+
+  # ── Rust ─────────────────────────────────────────────────────────────────
+  test-rust:
+    needs: detect
+    if: needs.detect.outputs.has_rust == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Run Rust recipe tests
+        run: |
+          if find recipes/rust -mindepth 2 -name "Cargo.toml" | grep -q .; then
+            cd recipes/rust && cargo test --workspace -- --test-threads=1
+          else
+            echo "No Rust recipe Cargo.toml files found, skipping"
+          fi
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15
+
+  # ── CLI (Deepgram CLI — installed via install.sh) ─────────────────────────
+  test-cli:
+    needs: detect
+    if: needs.detect.outputs.has_cli == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+
+      - name: Install Deepgram CLI
+        run: |
+          curl -fsSL https://deepgram.com/install.sh | sh
+          echo "$HOME/.deepgram/bin" >> $GITHUB_PATH
+          echo "/usr/local/bin" >> $GITHUB_PATH
+
+      - name: Run CLI recipe tests
+        run: |
+          find recipes/cli -name "example_test.sh" | sort | while read f; do
+            echo "── $f ──"
+            bash "$f" && echo "✓ PASSED" || { echo "✗ FAILED"; exit 1; }
+          done
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 15
+
+  # ── Required gate ─────────────────────────────────────────────────────────
+  # This is the check the ruleset requires. Always runs. Also executes the
+  # global E2E test (real Deepgram API call) before evaluating language jobs.
+  # skipped = language had no changes → fine
+  # success = tests passed → fine
+  # failure / cancelled = block merge
+  e2e-api-check:
+    needs: [detect, test-python, test-javascript, test-go, test-dotnet, test-java, test-rust, test-cli]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || '' }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run E2E API test
+        run: |
+          pip install "deepgram-sdk>=6.0.0" pytest -q
+          pytest tests/e2e.py -v
+        env:
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        timeout-minutes: 5
+
+      - name: Evaluate language test results
+        run: |
+          results=(
+            "python:${{ needs.test-python.result }}"
+            "javascript:${{ needs.test-javascript.result }}"
+            "go:${{ needs.test-go.result }}"
+            "dotnet:${{ needs.test-dotnet.result }}"
+            "java:${{ needs.test-java.result }}"
+            "rust:${{ needs.test-rust.result }}"
+            "cli:${{ needs.test-cli.result }}"
+          )
+          FAILED=false
+          for item in "${results[@]}"; do
+            lang="${item%%:*}"
+            result="${item##*:}"
+            printf "%-12s %s\n" "${lang}:" "$result"
+            [ "$result" = "failure" ] || [ "$result" = "cancelled" ] && FAILED=true
+          done
+          if [ "$FAILED" = "true" ]; then
+            echo "❌ One or more recipe test jobs failed"
+            exit 1
+          fi
+          echo "✅ All applicable recipe tests passed"

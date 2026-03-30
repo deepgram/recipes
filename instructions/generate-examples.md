@@ -222,7 +222,7 @@ gh pr merge "$PR_URL" --auto --squash
 # anything that still doesn't get triggered.
 sleep 3
 for attempt in 1 2 3; do
-  if gh workflow run lead-e2e.yml --repo deepgram/recipes --ref "$BRANCH"; then
+  if gh workflow run lead-test.yml --repo deepgram/recipes --ref "$BRANCH"; then
     echo "E2E triggered on $BRANCH (attempt $attempt)"
     break
   fi
