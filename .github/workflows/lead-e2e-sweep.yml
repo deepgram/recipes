@@ -2,7 +2,7 @@ name: Lead — E2E Sweep
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Every 15 minutes
+    - cron: '*/10 * * * *'  # Every 10 minutes
   workflow_dispatch:
 
 concurrency:
@@ -23,7 +23,7 @@ jobs:
           gh pr list --repo ${{ github.repository }} --state open \
             --json number,headRefName,statusCheckRollup \
             --jq '.[] | select(
-              (.headRefName | startswith("recipe/") or startswith("pm/")) and
+              (.headRefName != "main") and
               (.statusCheckRollup | length == 0)
             ) | .headRefName' \
           | while read branch; do

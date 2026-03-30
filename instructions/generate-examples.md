@@ -217,8 +217,18 @@ Closes part of #{issue_number}")
 
 gh pr merge "$PR_URL" --auto --squash
 
-# Bot PRs don't fire pull_request events — trigger E2E explicitly
-gh workflow run lead-e2e.yml --ref "$BRANCH"
+# Bot PRs don't fire pull_request events — trigger E2E explicitly.
+# Retry up to 3 times with a short delay; the 15-min sweep catches
+# anything that still doesn't get triggered.
+sleep 3
+for attempt in 1 2 3; do
+  if gh workflow run lead-e2e.yml --repo deepgram/recipes --ref "$BRANCH"; then
+    echo "E2E triggered on $BRANCH (attempt $attempt)"
+    break
+  fi
+  echo "Attempt $attempt failed, retrying in 5s..."
+  sleep 5
+done
 ```
 
 ### 5f — Return to main for the next recipe
