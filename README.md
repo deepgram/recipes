@@ -48,7 +48,7 @@ recipes/{language}/{product}/{version}/{recipe}/
 ## Recipes
 
 <!-- recipes-table-start -->
-*Last updated 2026-03-30 12:06 UTC*
+*Last updated 2026-03-30 14:57 UTC*
 
 | | Python | JavaScript | Go | .NET | Java | Rust | CLI |
 |---|---|---|---|---|---|---|---|
@@ -56,9 +56,9 @@ recipes/{language}/{product}/{version}/{recipe}/
 | Speech-to-Text \`v2\` | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Text-to-Speech \`v1\` | 1/5 | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Audio Intelligence \`v1\` | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Voice Agents \`v1\` | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| **Total** | **12/35** | **35/35** | **35/35** | **35/35** | **35/35** | **35/35** | **0/35** |
-| **Tests** | — | — | — | — | — | — | ✅ |
+| Voice Agents \`v1\` | 1/4 | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| **Total** | **13/35** | **35/35** | **35/35** | **35/35** | **35/35** | **35/35** | **0/35** |
+| **Tests** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 <!-- recipes-table-end -->
 
 ## Agent schedules
