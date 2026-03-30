@@ -1,34 +1,54 @@
-# .NET SDK Samples
+# .NET Recipes
 
-Code samples for the [Deepgram .NET SDK](https://github.com/deepgram/deepgram-dotnet-sdk).
+35 recipe(s) available.
 
-## Structure
 
-Each recipe is a standalone .NET console application:
+## Speech-to-Text `v1`
 
-```
-recipes/dotnet/{product}/v1/{recipe}/
-  Program.cs          # The runnable example
-  {Recipe}.csproj     # Project file with Deepgram SDK dependency
-  ExampleTest.cs      # Test class
-  README.md           # Recipe explanation
-```
+- [entities](audio-intelligence/v1/entities/)
+- [intents](audio-intelligence/v1/intents/)
+- [sentiment](audio-intelligence/v1/sentiment/)
+- [summarize](audio-intelligence/v1/summarize/)
+- [topics](audio-intelligence/v1/topics/)
 
-## Requirements
+## Speech-to-Text `v1`
 
-- .NET 8.0+
-- `DEEPGRAM_API_KEY` environment variable
+- [detect-entities](speech-to-text/v1/detect-entities/)
+- [detect-language](speech-to-text/v1/detect-language/)
+- [diarize](speech-to-text/v1/diarize/)
+- [intents](speech-to-text/v1/intents/)
+- [keywords](speech-to-text/v1/keywords/)
+- [multichannel](speech-to-text/v1/multichannel/)
+- [paragraphs](speech-to-text/v1/paragraphs/)
+- [punctuate](speech-to-text/v1/punctuate/)
+- [redact](speech-to-text/v1/redact/)
+- [search](speech-to-text/v1/search/)
+- [sentiment](speech-to-text/v1/sentiment/)
+- [smart-format](speech-to-text/v1/smart-format/)
+- [streaming](speech-to-text/v1/streaming/)
+- [streaming-file](speech-to-text/v1/streaming-file/)
+- [summarize](speech-to-text/v1/summarize/)
+- [topics](speech-to-text/v1/topics/)
+- [transcribe-file](speech-to-text/v1/transcribe-file/)
+- [transcribe-url](speech-to-text/v1/transcribe-url/)
+- [utterances](speech-to-text/v1/utterances/)
 
-## Run any example
+## Speech-to-Text `v2`
 
-```bash
-cd recipes/dotnet/{product}/v1/{recipe}
-dotnet run
-```
+- [streaming](speech-to-text/v2/streaming/)
+- [transcribe-url](speech-to-text/v2/transcribe-url/)
 
-## Run all tests
+## Speech-to-Text `v1`
 
-```bash
-cd recipes/dotnet
-dotnet test
-```
+- [generate-audio](text-to-speech/v1/generate-audio/)
+- [select-encoding](text-to-speech/v1/select-encoding/)
+- [select-model](text-to-speech/v1/select-model/)
+- [stream-audio](text-to-speech/v1/stream-audio/)
+- [websocket-streaming](text-to-speech/v1/websocket-streaming/)
+
+## Speech-to-Text `v1`
+
+- [connect](voice-agents/v1/connect/)
+- [custom-llm](voice-agents/v1/custom-llm/)
+- [custom-tts](voice-agents/v1/custom-tts/)
+- [function-calling](voice-agents/v1/function-calling/)

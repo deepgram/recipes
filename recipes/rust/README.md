@@ -1,4 +1,4 @@
-# Java Recipes
+# Rust Recipes
 
 35 recipe(s) available.
 

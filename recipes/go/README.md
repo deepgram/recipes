@@ -1,4 +1,4 @@
-# Java Recipes
+# Go Recipes
 
 35 recipe(s) available.
 
