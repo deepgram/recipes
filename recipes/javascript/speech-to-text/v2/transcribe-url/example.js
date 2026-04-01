@@ -1,12 +1,12 @@
 /**
- * Recipe: Transcribe Audio from URL — v2 API (Speech-to-Text v2)
+ * Recipe: Transcribe Audio from URL — v2 Model (Speech-to-Text v2)
  * ================================================================
- * Demonstrates pre-recorded transcription using the v2 API endpoint with
- * the flux-general-en model, optimized for English audio.
+ * Demonstrates pre-recorded transcription using the flux-general-en model
+ * (Deepgram's v2 English model). Pre-recorded transcription uses the same
+ * v1.media.transcribeUrl() method — the "v2" refers to the model name, not
+ * a different API endpoint (unlike streaming, which has a distinct v2 WebSocket).
  *
- * The v2 API uses a different response format. Check the response structure
- * carefully — it differs from v1.
- *
+ * See also: speech-to-text/v2/streaming for the v2 WebSocket API.
  * See also: speech-to-text/v1/transcribe-url for the v1 equivalent.
  */
 
@@ -17,19 +17,16 @@ const AUDIO_URL = "https://dpgr.am/spacewalk.wav";
 async function main() {
   const client = new DeepgramClient();
 
-  const response = await client.listen.v2.media.transcribeUrl({
+  // flux-general-en is the v2 English model — accessed via v1.media (same endpoint)
+  const response = await client.listen.v1.media.transcribeUrl({
     url: AUDIO_URL,
-    model: "flux-general-en",  // <-- v2 uses flux-general-en for English
+    model: "flux-general-en",
     smart_format: true,
-    // v2 API: English-only, high-accuracy model
   });
 
-  // v2 response structure may differ from v1 — check the actual response
   const transcript = response.results?.channels?.[0]?.alternatives?.[0]?.transcript;
   if (transcript) {
     console.log(transcript);
-  } else {
-    console.log(JSON.stringify(response, null, 2));
   }
 }
 
