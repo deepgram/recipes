@@ -9,7 +9,7 @@ name: Lead — Test
 # test-dotnet    — dotnet test (per .csproj)
 # test-java      — mvn test (per pom.xml)
 # test-rust      — cargo test --workspace
-# test-cli       — bash example_test.sh (Deepgram CLI installed via install.sh)
+# test-cli       — bash example_test.sh for changed recipes only; posts output to PR comment
 # e2e-api-check  — REQUIRED GATE: runs real Deepgram API call + validates all jobs
 
 on:
@@ -46,6 +46,7 @@ jobs:
       has_java:       ${{ steps.scan.outputs.has_java }}
       has_rust:       ${{ steps.scan.outputs.has_rust }}
       has_cli:        ${{ steps.scan.outputs.has_cli }}
+      cli_recipe_dirs: ${{ steps.scan.outputs.cli_recipe_dirs }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -70,6 +71,15 @@ jobs:
               echo "has_${lang}=false" >> $GITHUB_OUTPUT
             fi
           done
+
+          # For CLI: identify the specific recipe dirs to test (scoped to changed recipes on PR)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CLI_DIRS=$(echo "$CHANGED" | grep '^recipes/cli/' | cut -d/ -f1-5 | sort -u | tr '\n' ' ' | xargs)
+          else
+            CLI_DIRS=$(find recipes/cli -name "example_test.sh" -exec dirname {} \; 2>/dev/null | sort | tr '\n' ' ' | xargs || echo "")
+          fi
+          echo "cli_recipe_dirs=${CLI_DIRS}" >> $GITHUB_OUTPUT
+          [ -n "$CLI_DIRS" ] && echo "CLI recipe dirs: $CLI_DIRS"
 
   # ── Python ────────────────────────────────────────────────────────────────
   test-python:
@@ -199,6 +209,7 @@ jobs:
         timeout-minutes: 15
 
   # ── CLI (Deepgram CLI — installed via install.sh) ─────────────────────────
+  # Only tests recipes that changed in this PR; posts output as a PR comment.
   test-cli:
     needs: detect
     if: needs.detect.outputs.has_cli == 'true'
@@ -215,14 +226,78 @@ jobs:
           echo "/usr/local/bin" >> $GITHUB_PATH
 
       - name: Run CLI recipe tests
+        id: run-tests
         run: |
-          find recipes/cli -name "example_test.sh" | sort | while read f; do
-            echo "── $f ──"
-            bash "$f" && echo "✓ PASSED" || { echo "✗ FAILED"; exit 1; }
+          DIRS="${{ needs.detect.outputs.cli_recipe_dirs }}"
+          OUTPUT_FILE="$RUNNER_TEMP/cli-test-output.txt"
+          FAILED=false
+
+          for dir in $DIRS; do
+            [ -f "$dir/example_test.sh" ] || continue
+            echo "── $dir ──" | tee -a "$OUTPUT_FILE"
+            # Capture output and exit status separately to avoid pipe overriding $?
+            output=$(bash "$dir/example_test.sh" 2>&1)
+            status=$?
+            printf '%s\n' "$output" | tee -a "$OUTPUT_FILE"
+            if [ $status -eq 0 ]; then
+              echo "✓ PASSED" | tee -a "$OUTPUT_FILE"
+            else
+              echo "✗ FAILED" | tee -a "$OUTPUT_FILE"
+              FAILED=true
+            fi
           done
+
+          [ "$FAILED" = "true" ] && exit 1 || exit 0
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
         timeout-minutes: 15
+
+      - name: Post test results to PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        env:
+          RUNNER_TEMP: ${{ runner.temp }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const outputFile = path.join(process.env.RUNNER_TEMP, 'cli-test-output.txt');
+
+            let output = '';
+            try {
+              output = fs.readFileSync(outputFile, 'utf8').trim();
+            } catch(e) {
+              output = 'No test output captured.';
+            }
+
+            if (output.length > 60000) {
+              output = output.slice(0, 60000) + '\n... (truncated)';
+            }
+
+            const passed = '${{ steps.run-tests.outcome }}' === 'success';
+            const icon = passed ? '✅' : '❌';
+            const marker = '<!-- cli-test-results -->';
+            const body = `${marker}\n## ${icon} CLI Recipe Tests\n\n\`\`\`\n${output}\n\`\`\``;
+
+            const prNumber = context.issue.number;
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: prNumber,
+            });
+            const existing = comments.find(c => c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                ...context.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }
 
   # ── Required gate ─────────────────────────────────────────────────────────
   # This is the check the ruleset requires. Always runs. Also executes the
