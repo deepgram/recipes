@@ -9,6 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Collections;
 import resources.listen.v1.media.requests.MediaTranscribeRequestOctetStream;
+import resources.listen.v1.media.types.MediaTranscribeRequestModel;
 import resources.listen.v1.media.types.MediaTranscribeResponse;
 import types.ListenV1Response;
 
@@ -29,7 +30,7 @@ public class Example {
         MediaTranscribeResponse result = client.listen().v1().media().transcribeFile(
             MediaTranscribeRequestOctetStream.builder()
                 .body(audioData)  // <-- raw audio bytes
-                // Optional: model, smartFormat, language, punctuate
+                .model(MediaTranscribeRequestModel.NOVA3)
                 .build());
 
         // response path: results.channels[0].alternatives[0].transcript
