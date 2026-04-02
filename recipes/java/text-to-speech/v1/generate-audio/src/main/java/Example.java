@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import resources.speak.v1.audio.requests.SpeakV1Request;
+import resources.speak.v1.audio.types.AudioGenerateRequestModel;
 
 public class Example {
     public static void main(String[] args) throws Exception {
@@ -20,7 +21,7 @@ public class Example {
         InputStream audio = client.speak().v1().audio().generate(
             SpeakV1Request.builder()
                 .text("Hello from Deepgram! This is a text-to-speech example.")
-                .model("aura-2-thalia-en")  // <-- THIS: aura-2 voice model
+                .model(AudioGenerateRequestModel.AURA2THALIA_EN)  // <-- THIS: aura-2 voice model
                 // Optional: encoding("linear16"), container("wav"), sampleRate(24000)
                 .build());
 

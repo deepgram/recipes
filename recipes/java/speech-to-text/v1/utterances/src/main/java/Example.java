@@ -31,7 +31,7 @@ public class Example {
         ListenV1Response response = (ListenV1Response) result.get();
         response.getResults().getUtterances().orElse(Collections.emptyList()).forEach(u ->
             System.out.printf("[%.1fs-%.1fs] %s%n",
-                u.getStart().orElse(0.0), u.getEnd().orElse(0.0),
+                u.getStart().orElse(0.0f), u.getEnd().orElse(0.0f),
                 u.getTranscript().orElse("")));
     }
 }
