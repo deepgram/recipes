@@ -6,6 +6,9 @@
  */
 import java.io.InputStream;
 import resources.speak.v1.audio.requests.SpeakV1Request;
+import resources.speak.v1.audio.types.AudioGenerateRequestContainer;
+import resources.speak.v1.audio.types.AudioGenerateRequestEncoding;
+import resources.speak.v1.audio.types.AudioGenerateRequestModel;
 
 public class Example {
     public static void main(String[] args) throws Exception {
@@ -17,9 +20,9 @@ public class Example {
         InputStream audio = client.speak().v1().audio().generate(
             SpeakV1Request.builder()
                 .text("Hello from Deepgram! Streaming text-to-speech audio.")
-                .model("aura-2-thalia-en")
-                .encoding("linear16")  // <-- THIS: linear16 encoding for streaming
-                .container("none")
+                .model(AudioGenerateRequestModel.AURA2THALIA_EN)
+                .encoding(AudioGenerateRequestEncoding.LINEAR16)  // <-- THIS: linear16 encoding for streaming
+                .container(AudioGenerateRequestContainer.NONE)
                 // Optional: sampleRate(24000), bitRate(128000)
                 .build());
 

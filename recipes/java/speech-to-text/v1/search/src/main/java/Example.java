@@ -35,7 +35,7 @@ public class Example {
                 System.out.println("Search: \"" + s.getQuery().orElse("") + "\"");
                 s.getHits().orElse(Collections.emptyList()).forEach(h ->
                     System.out.printf("  Hit: %.0f%% at %.1fs%n",
-                        h.getConfidence().orElse(0.0) * 100, h.getStart().orElse(0.0)));
+                        h.getConfidence().orElse(0.0f) * 100, h.getStart().orElse(0.0f)));
             });
     }
 }
