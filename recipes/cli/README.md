@@ -1,11 +1,12 @@
 # CLI Recipes
 
-31 recipe(s) available.
+32 recipe(s) available.
 
 
 ## Speech-to-Text `v1`
 
 - [entities](audio-intelligence/v1/entities/)
+- [sentiment](audio-intelligence/v1/sentiment/)
 - [summarize](audio-intelligence/v1/summarize/)
 - [topics](audio-intelligence/v1/topics/)
 

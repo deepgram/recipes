@@ -1,6 +1,6 @@
 # Coverage
 
-*Last updated 2026-04-02 06:55 UTC*
+*Last updated 2026-04-02 12:50 UTC*
 
 
 ## Speech-to-Text `v1`
@@ -26,6 +26,13 @@
 | keywords | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | streaming | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | streaming-file | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| filler-words | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| replace | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| keyterm | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| profanity-filter | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| dictation | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| numerals | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| measurements | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 
 ## Speech-to-Text `v2`
 
@@ -43,13 +50,14 @@
 | websocket-streaming | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | select-model | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | select-encoding | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| bit-rate | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 
 ## Audio Intelligence `v1`
 
 | Recipe | Python | Javascript | Go | Dotnet | Java | Rust | Cli |
 |---|---|---|---|---|---|---|---|
 | summarize | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| sentiment | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| sentiment | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | topics | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | intents | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | entities | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -62,3 +70,12 @@
 | custom-llm | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | custom-tts | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | function-calling | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+## Text Analysis `v1`
+
+| Recipe | Python | Javascript | Go | Dotnet | Java | Rust | Cli |
+|---|---|---|---|---|---|---|---|
+| summarize | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| sentiment | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| topics | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| intents | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
