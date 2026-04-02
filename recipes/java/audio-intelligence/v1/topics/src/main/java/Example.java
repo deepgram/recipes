@@ -26,9 +26,11 @@ public class Example {
 
         ListenV1Response response = (ListenV1Response) result.get();
         response.getResults().getTopics().ifPresent(t ->
-            t.getSegments().orElse(Collections.emptyList()).forEach(seg ->
-                seg.getTopics().orElse(Collections.emptyList()).forEach(topic ->
-                    System.out.printf("Topic: %s (%.0f%%)%n",
-                        topic.getTopic().orElse(""), topic.getConfidence().orElse(0.0) * 100))));
+            t.getResults().ifPresent(r ->
+                r.getTopics().ifPresent(topicsObj ->
+                    topicsObj.getSegments().orElse(Collections.emptyList()).forEach(seg ->
+                        seg.getTopics().orElse(Collections.emptyList()).forEach(topic ->
+                            System.out.printf("Topic: %s (%.0f%%)%n",
+                                topic.getTopic().orElse(""), topic.getConfidenceScore().orElse(0.0f) * 100))))));
     }
 }
