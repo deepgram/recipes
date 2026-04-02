@@ -1,6 +1,6 @@
 # Coverage
 
-*Last updated 2026-04-02 12:50 UTC*
+*Last updated 2026-04-02 18:50 UTC*
 
 
 ## Speech-to-Text `v1`
@@ -30,7 +30,7 @@
 | replace | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | keyterm | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | profanity-filter | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| dictation | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| dictation | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | numerals | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | measurements | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 

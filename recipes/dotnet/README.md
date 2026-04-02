@@ -1,6 +1,6 @@
 # .NET Recipes
 
-35 recipe(s) available.
+36 recipe(s) available.
 
 
 ## Speech-to-Text `v1`
@@ -16,6 +16,7 @@
 - [detect-entities](speech-to-text/v1/detect-entities/)
 - [detect-language](speech-to-text/v1/detect-language/)
 - [diarize](speech-to-text/v1/diarize/)
+- [dictation](speech-to-text/v1/dictation/)
 - [intents](speech-to-text/v1/intents/)
 - [keywords](speech-to-text/v1/keywords/)
 - [multichannel](speech-to-text/v1/multichannel/)
