@@ -235,9 +235,11 @@ jobs:
           for dir in $DIRS; do
             [ -f "$dir/example_test.sh" ] || continue
             echo "── $dir ──" | tee -a "$OUTPUT_FILE"
-            # Capture output and exit status separately to avoid pipe overriding $?
+            # set +e so the runner's -e flag doesn't kill the step on test failure
+            set +e
             output=$(bash "$dir/example_test.sh" 2>&1)
             status=$?
+            set -e
             printf '%s\n' "$output" | tee -a "$OUTPUT_FILE"
             if [ $status -eq 0 ]; then
               echo "✓ PASSED" | tee -a "$OUTPUT_FILE"
