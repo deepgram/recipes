@@ -140,6 +140,55 @@
               "category": "operations",
               "description": "Stream a local audio file over WebSocket for transcription",
               "params": {}
+            },
+            {
+              "slug": "filler-words",
+              "name": "Filler Words",
+              "category": "features",
+              "description": "Capture filler words (\"uh\", \"um\") in the transcript",
+              "params": {"filler_words": true}
+            },
+            {
+              "slug": "replace",
+              "name": "Find and Replace",
+              "category": "features",
+              "description": "Find and replace terms in the transcript output",
+              "params": {"replace": ["Deepgram:Deep Gram"]}
+            },
+            {
+              "slug": "keyterm",
+              "name": "Key Term Prompting",
+              "category": "features",
+              "description": "Boost recognition of specific key terms with Nova-3",
+              "params": {"keyterm": ["Deepgram"]}
+            },
+            {
+              "slug": "profanity-filter",
+              "name": "Profanity Filter",
+              "category": "features",
+              "description": "Mask profanity in the transcript output",
+              "params": {"profanity_filter": true}
+            },
+            {
+              "slug": "dictation",
+              "name": "Dictation Mode",
+              "category": "features",
+              "description": "Format transcript using dictation-style spoken punctuation commands",
+              "params": {"dictation": true}
+            },
+            {
+              "slug": "numerals",
+              "name": "Numerals",
+              "category": "features",
+              "description": "Convert spoken numbers to numeric digits in the transcript",
+              "params": {"numerals": true}
+            },
+            {
+              "slug": "measurements",
+              "name": "Measurements",
+              "category": "features",
+              "description": "Convert spoken measurements to standard abbreviations",
+              "params": {"measurements": true}
             }
           ]
         },
@@ -206,6 +255,13 @@
               "category": "features",
               "description": "Choose output audio encoding: linear16, mp3, opus, flac, aac, mulaw",
               "params": {"encoding": "mp3", "container": "none"}
+            },
+            {
+              "slug": "bit-rate",
+              "name": "Bit Rate Control",
+              "category": "features",
+              "description": "Control the output audio bit rate for compressed encodings",
+              "params": {"bit_rate": 48000, "encoding": "mp3"}
             }
           ]
         }
@@ -293,6 +349,46 @@
               "category": "features",
               "description": "Inject tool calls for the LLM to use during a conversation",
               "params": {}
+            }
+          ]
+        }
+      }
+    },
+    "text-analysis": {
+      "slug": "text-analysis",
+      "name": "Text Analysis",
+      "description": "Intelligence features for plain text content analysis (no audio)",
+      "versions": {
+        "v1": {
+          "description": "Applied directly to text input via the text analysis API",
+          "recipes": [
+            {
+              "slug": "summarize",
+              "name": "Text Summarization",
+              "category": "operations",
+              "description": "Generate a concise summary from plain text input",
+              "params": {"summarize": "v2"}
+            },
+            {
+              "slug": "sentiment",
+              "name": "Sentiment Analysis",
+              "category": "operations",
+              "description": "Analyze sentiment (positive/negative/neutral) on text",
+              "params": {"sentiment": true}
+            },
+            {
+              "slug": "topics",
+              "name": "Topic Detection",
+              "category": "operations",
+              "description": "Identify topics discussed in text",
+              "params": {"topics": true}
+            },
+            {
+              "slug": "intents",
+              "name": "Intent Recognition",
+              "category": "operations",
+              "description": "Detect intents from plain text input",
+              "params": {"intents": true}
             }
           ]
         }
