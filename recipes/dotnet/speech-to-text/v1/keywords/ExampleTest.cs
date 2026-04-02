@@ -7,7 +7,7 @@ public class ExampleTest
     public void ExampleRunsAndProducesOutput()
     {
         var dir = Path.GetDirectoryName(typeof(ExampleTest).Assembly.Location)!;
-        var projectDir = Path.GetFullPath(Path.Combine(dir, "..", "..", "..", ".."));
+        var projectDir = Path.GetFullPath(Path.Combine(dir, "..", "..", ".."));
 
         var psi = new ProcessStartInfo("dotnet", "run")
         {
