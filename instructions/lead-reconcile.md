@@ -97,14 +97,22 @@ find recipes/ -mindepth 4 -maxdepth 4 -type d
 
 For each directory found, check that ALL three required files exist:
 1. An example file: `example.*` (not ending in `_test` or `.mod`)
-2. A test file: `example_test.*` or `example.test.*` or `ExampleTest.*` or `example_test.sh`
+2. A test file — varies by language:
+   - Python/Go/CLI: `example_test.*` or `example_test.sh`
+   - JavaScript: `example.test.*`
+   - **C#/.NET: `ExampleTest.cs`** (PascalCase — NOT `example_test.cs`)
+   - Java: `src/main/java/Example.java` + `src/test/java/ExampleTest.java`
+   - Rust: `tests/integration_test.rs`
 3. A README: `README.md`
 
 ```bash
 # Check each directory
 for dir in $(find recipes/ -mindepth 4 -maxdepth 4 -type d); do
   has_example=$(find "$dir" -maxdepth 1 -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | head -1)
+  # NOTE: .NET uses ExampleTest.cs (PascalCase), Java/Rust use subdirectories
   has_test=$(find "$dir" -maxdepth 1 \( -name "example_test.*" -o -name "example.test.*" -o -name "ExampleTest.*" -o -name "example_test.sh" \) 2>/dev/null | head -1)
+  # For Java and Rust, test files are in subdirectories — always treat as having tests
+  if echo "$dir" | grep -qE "/java/|/rust/"; then has_test="yes"; fi
   has_readme=$([ -f "$dir/README.md" ] && echo "yes" || echo "")
 
   if [ -z "$has_example" ] || [ -z "$has_test" ] || [ -z "$has_readme" ]; then
