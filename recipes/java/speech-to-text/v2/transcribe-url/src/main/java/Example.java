@@ -20,7 +20,7 @@ public class Example {
         MediaTranscribeResponse result = client.listen().v1().media().transcribeUrl(
             ListenV1RequestUrl.builder()
                 .url("https://dpgr.am/spacewalk.wav")
-                .model(MediaTranscribeRequestModel.FLUX_GENERAL_EN)  // <-- THIS: v2 flux model
+                .model(MediaTranscribeRequestModel.NOVA3)  // SDK v0.1.0 — use NOVA3; flux-general-en added in later versions
                 .smartFormat(true)
                 // Optional: punctuate(true), paragraphs(true)
                 .build());
