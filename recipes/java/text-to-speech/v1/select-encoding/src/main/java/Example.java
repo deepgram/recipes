@@ -9,6 +9,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import resources.speak.v1.audio.requests.SpeakV1Request;
+import resources.speak.v1.audio.types.AudioGenerateRequestContainer;
+import resources.speak.v1.audio.types.AudioGenerateRequestEncoding;
+import resources.speak.v1.audio.types.AudioGenerateRequestModel;
 
 public class Example {
     public static void main(String[] args) throws Exception {
@@ -20,9 +23,9 @@ public class Example {
         InputStream audio = client.speak().v1().audio().generate(
             SpeakV1Request.builder()
                 .text("This audio uses linear16 encoding in a WAV container.")
-                .model("aura-2-thalia-en")
-                .encoding("linear16")  // <-- THIS: selecting audio encoding
-                .container("wav")      // Container format: wav, none
+                .model(AudioGenerateRequestModel.AURA2THALIA_EN)
+                .encoding(AudioGenerateRequestEncoding.LINEAR16)  // <-- THIS: selecting audio encoding
+                .container(AudioGenerateRequestContainer.WAV)     // Container format: wav, none
                 // Available encodings: linear16, mp3, opus, flac, aac, mulaw
                 .build());
 

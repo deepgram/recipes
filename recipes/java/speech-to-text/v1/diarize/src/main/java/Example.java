@@ -22,25 +22,16 @@ public class Example {
                 .url("https://dpgr.am/spacewalk.wav")
                 .model(MediaTranscribeRequestModel.NOVA3)
                 .diarize(true)  // <-- THIS is the feature this recipe demonstrates
+                .utterances(true)  // utterances carry speaker labels
                 .smartFormat(true)
-                // Optional: utterances(true), paragraphs(true)
+                // Optional: paragraphs(true)
                 .build());
 
-        // Path: results.channels[0].alternatives[0].words[] — each word has .speaker
+        // Path: results.utterances[] — each utterance has .speaker and .transcript
         ListenV1Response response = (ListenV1Response) result.get();
-        var words = response.getResults().getChannels().get(0)
-            .getAlternatives().orElse(Collections.emptyList()).get(0)
-            .getWords().orElse(Collections.emptyList());
-        int lastSpeaker = -1;
-        for (var w : words) {
-            int speaker = w.getSpeaker().orElse(0.0).intValue();
-            if (speaker != lastSpeaker) {
-                if (lastSpeaker >= 0) System.out.println();
-                System.out.print("[Speaker " + speaker + "] ");
-                lastSpeaker = speaker;
-            }
-            System.out.print(w.getWord().orElse("") + " ");
-        }
-        System.out.println();
+        response.getResults().getUtterances().orElse(Collections.emptyList()).forEach(u -> {
+            int speaker = u.getSpeaker().orElse(0.0f).intValue();
+            System.out.printf("[Speaker %d] %s%n", speaker, u.getTranscript().orElse(""));
+        });
     }
 }

@@ -26,12 +26,13 @@ public class Example {
                 // Optional: topics(true), sentiment(true)
                 .build());
 
-        // Path: results.entities.entities[] — each has .label, .value, .confidence
+        // Path: results.channels[0].alternatives[0].entities[] — each has .label, .value, .confidence
         ListenV1Response response = (ListenV1Response) result.get();
-        response.getResults().getEntities().ifPresent(e ->
-            e.getEntities().orElse(Collections.emptyList()).forEach(entity ->
+        response.getResults().getChannels().get(0)
+            .getAlternatives().orElse(Collections.emptyList()).get(0)
+            .getEntities().orElse(Collections.emptyList()).forEach(entity ->
                 System.out.printf("%s: %s (%.0f%%)%n",
                     entity.getLabel().orElse(""), entity.getValue().orElse(""),
-                    entity.getConfidence().orElse(0.0) * 100)));
+                    entity.getConfidence().orElse(0.0f) * 100));
     }
 }

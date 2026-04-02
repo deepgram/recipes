@@ -6,11 +6,14 @@
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import okio.ByteString;
 import resources.listen.v1.types.ListenV1CloseStream;
 import resources.listen.v1.types.ListenV1CloseStreamType;
 import resources.listen.v1.websocket.V1ConnectOptions;
 import resources.listen.v1.websocket.V1WebSocketClient;
+import types.ListenV1InterimResults;
 import types.ListenV1Model;
+import types.ListenV1SmartFormat;
 
 public class Example {
     public static void main(String[] args) throws Exception {
@@ -33,11 +36,11 @@ public class Example {
 
         ws.connect(V1ConnectOptions.builder()
             .model(ListenV1Model.NOVA3)  // <-- THIS: Nova-3 model for streaming
-            .smartFormat(true).interimResults(true)
+            .smartFormat(ListenV1SmartFormat.TRUE).interimResults(ListenV1InterimResults.TRUE)
             .build()).get(10, TimeUnit.SECONDS);
 
         for (int i = 0; i < audio.length; i += 4096) {
-            ws.sendMedia(java.util.Arrays.copyOfRange(audio, i, Math.min(i + 4096, audio.length)));
+            ws.sendMedia(ByteString.of(java.util.Arrays.copyOfRange(audio, i, Math.min(i + 4096, audio.length))));
         }
         ws.sendCloseStream(ListenV1CloseStream.builder().type(ListenV1CloseStreamType.CLOSE_STREAM).build());
         done.await(30, TimeUnit.SECONDS);
