@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import resources.speak.v1.audio.requests.SpeakV1Request;
+import resources.speak.v1.audio.types.AudioGenerateRequestModel;
 
 public class Example {
     public static void main(String[] args) throws Exception {
@@ -20,8 +21,8 @@ public class Example {
         InputStream audio = client.speak().v1().audio().generate(
             SpeakV1Request.builder()
                 .text("Hello! This is the Arcas voice model speaking.")
-                .model("aura-2-arcas-en")  // <-- THIS: selecting a specific voice model
-                // Available: aura-2-thalia-en, aura-2-arcas-en, aura-2-asteria-en, etc.
+                .model(AudioGenerateRequestModel.AURA2ARCAS_EN)  // <-- THIS: selecting a specific voice model
+                // Available: AURA2THALIA_EN, AURA2ARCAS_EN, AURA2ASTERIA_EN, etc.
                 .build());
 
         long bytes = Files.copy(audio, Path.of("output.mp3"), StandardCopyOption.REPLACE_EXISTING);
