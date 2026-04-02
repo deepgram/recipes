@@ -24,6 +24,7 @@ public class Example {
             + "In healthcare news, a new mRNA vaccine shows promising results in "
             + "early clinical trials for treating certain types of cancer.";
 
+        System.out.println("Analyzing: " + text.substring(0, Math.min(80, text.length())));
         ReadV1Response response = client.read().v1().text().analyze(
             TextAnalyzeRequest.builder()
                 .body(ReadV1Request.of(ReadV1RequestText.builder().text(text).build()))
