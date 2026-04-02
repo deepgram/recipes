@@ -8,9 +8,13 @@ on:
       - opened
       - labeled
   workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Queue issue number to process (optional)'
+        required: false
 
 concurrency:
-  group: engineer-${{ github.ref }}
+  group: engineer
   cancel-in-progress: false
 
 jobs:
@@ -32,15 +36,71 @@ jobs:
           git config user.name "recipes-bot"
           git config user.email "noreply@deepgram.com"
 
+      - name: Get date
+        id: date
+        run: echo "date=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Fetch latest Deepgram SDK versions
+        id: sdk
+        run: |
+          latest() { curl -sf "https://api.github.com/repos/deepgram/$1/releases/latest" | jq -r '.tag_name // "unknown"'; }
+          echo "python=$(latest deepgram-python-sdk)"   >> $GITHUB_OUTPUT
+          echo "js=$(latest deepgram-js-sdk)"           >> $GITHUB_OUTPUT
+          echo "go=$(latest deepgram-go-sdk)"           >> $GITHUB_OUTPUT
+          echo "java=$(latest deepgram-java-sdk)"       >> $GITHUB_OUTPUT
+          echo "rust=$(latest deepgram-rust-sdk)"       >> $GITHUB_OUTPUT
+          echo "dotnet=$(latest deepgram-dotnet-sdk)"   >> $GITHUB_OUTPUT
+          echo "cli=$(latest cli)"                      >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT | grep -E "^(python|js|go|java|rust|dotnet|cli)="
+
+      - name: Check back pressure
+        id: backpressure
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Pause if 5+ PRs are already waiting for human merge
+          READY=$(gh pr list --repo ${{ github.repository }} --state open \
+            --label "status:review-passed" \
+            --json number --jq 'length' 2>/dev/null || echo "0")
+          echo "PRs ready to merge: $READY"
+          if [ "$READY" -ge 5 ]; then
+            echo "blocked=true" >> $GITHUB_OUTPUT
+            echo "⏸ Back pressure: $READY PRs waiting for merge — skipping this run"
+          else
+            echo "blocked=false" >> $GITHUB_OUTPUT
+            echo "✓ Pipeline has capacity ($READY/5 slots used)"
+          fi
+
       - name: Run instruction
+        if: steps.backpressure.outputs.blocked != 'true'
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           mode: agent
           model: claude-opus-4-6
           allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
           timeout_minutes: 45
-          direct_prompt: "Read and execute instructions/engineer.md"
+          direct_prompt: |
+            Read and execute instructions/engineer.md.
+
+            Context:
+            - Today's date: ${{ steps.date.outputs.date }}
+            - Repository: ${{ github.repository }}
+            - Trigger: ${{ github.event_name }}
+            - Issue number (if triggered by issue): ${{ github.event.issue.number }}
+            - Manual issue override: ${{ inputs.issue_number }}
+
+            REQUIRED — use EXACTLY these Deepgram SDK versions, no older:
+            - Python:     deepgram-sdk==${{ steps.sdk.outputs.python }}  (requirements.txt)
+            - JavaScript: @deepgram/sdk@${{ steps.sdk.outputs.js }}      (package.json)
+            - Go:         ${{ steps.sdk.outputs.go }}                    (go.mod)
+            - Java:       ${{ steps.sdk.outputs.java }}                  (pom.xml)
+            - Rust:       ${{ steps.sdk.outputs.rust }}                  (Cargo.toml)
+            - .NET:       ${{ steps.sdk.outputs.dotnet }}                (*.csproj)
+            - CLI:        ${{ steps.sdk.outputs.cli }}
+
+            Pin Python with == not >=. Pin JS with exact version (no ^ or ~).
         env:
           KAPA_API_KEY: ${{ secrets.KAPA_API_KEY }}
           KAPA_PROJECT_ID: ${{ vars.KAPA_PROJECT_ID }}
