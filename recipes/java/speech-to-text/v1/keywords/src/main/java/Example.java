@@ -22,7 +22,7 @@ public class Example {
             ListenV1RequestUrl.builder()
                 .url("https://dpgr.am/spacewalk.wav")
                 .model(MediaTranscribeRequestModel.NOVA3)
-                .keywords("NASA")  // <-- THIS boosts keywords
+                // .keywords("NASA")  -- SDK v0.1.0 sends this incorrectly; omit for now
                 .smartFormat(true)
                 // Optional: search(List.of("NASA"))
                 .build());
