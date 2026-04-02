@@ -22,7 +22,7 @@ public class Example {
             ListenV1RequestUrl.builder()
                 .url("https://dpgr.am/spacewalk.wav")
                 .model(MediaTranscribeRequestModel.NOVA3)
-                .redact(List.of("pci", "ssn"))  // <-- THIS is the feature this recipe demonstrates
+                .redact("pci") // SDK v0.1.0 supports one redaction at a time  // <-- THIS is the feature this recipe demonstrates
                 .smartFormat(true)
                 // Optional: detectEntities(true)
                 .build());
