@@ -1,30 +1,50 @@
 # CLI Recipes
 
-Code recipes for the [Deepgram CLI](https://github.com/deepgram/cli) (`dg`).
+31 recipe(s) available.
 
-## Install
 
-```bash
-curl -fsSL https://deepgram.com/install.sh | sh
-```
+## Speech-to-Text `v1`
 
-Also available via pip: `pip install deepctl`
+- [entities](audio-intelligence/v1/entities/)
+- [summarize](audio-intelligence/v1/summarize/)
+- [topics](audio-intelligence/v1/topics/)
 
-The CLI installs as `dg`, `deepctl`, and `deepgram` — all the same binary.
+## Speech-to-Text `v1`
 
-## Structure
+- [detect-entities](speech-to-text/v1/detect-entities/)
+- [detect-language](speech-to-text/v1/detect-language/)
+- [diarize](speech-to-text/v1/diarize/)
+- [intents](speech-to-text/v1/intents/)
+- [keywords](speech-to-text/v1/keywords/)
+- [multichannel](speech-to-text/v1/multichannel/)
+- [paragraphs](speech-to-text/v1/paragraphs/)
+- [punctuate](speech-to-text/v1/punctuate/)
+- [redact](speech-to-text/v1/redact/)
+- [search](speech-to-text/v1/search/)
+- [sentiment](speech-to-text/v1/sentiment/)
+- [smart-format](speech-to-text/v1/smart-format/)
+- [streaming](speech-to-text/v1/streaming/)
+- [streaming-file](speech-to-text/v1/streaming-file/)
+- [summarize](speech-to-text/v1/summarize/)
+- [topics](speech-to-text/v1/topics/)
+- [transcribe-url](speech-to-text/v1/transcribe-url/)
+- [utterances](speech-to-text/v1/utterances/)
 
-```
-recipes/cli/{product}/{version}/{recipe}/
-  example.sh          # Uses dg listen / dg speak / dg read
-  example_test.sh     # Runs example.sh, asserts non-empty output
-  README.md           # Recipe explanation
-```
+## Speech-to-Text `v2`
 
-## Run any recipe
+- [transcribe-url](speech-to-text/v2/transcribe-url/)
 
-```bash
-export DEEPGRAM_API_KEY=your_key
-cd recipes/cli/{product}/{version}/{recipe}
-bash example.sh
-```
+## Speech-to-Text `v1`
+
+- [generate-audio](text-to-speech/v1/generate-audio/)
+- [select-encoding](text-to-speech/v1/select-encoding/)
+- [select-model](text-to-speech/v1/select-model/)
+- [stream-audio](text-to-speech/v1/stream-audio/)
+- [websocket-streaming](text-to-speech/v1/websocket-streaming/)
+
+## Speech-to-Text `v1`
+
+- [connect](voice-agents/v1/connect/)
+- [custom-llm](voice-agents/v1/custom-llm/)
+- [custom-tts](voice-agents/v1/custom-tts/)
+- [function-calling](voice-agents/v1/function-calling/)

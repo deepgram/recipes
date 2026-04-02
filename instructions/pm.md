@@ -46,12 +46,35 @@ Store this as `latest_tag` for later use.
 
 ## Step 3: Check Existing Coverage for Each Language
 
-For each SDK, find all recipe paths that already have an example file:
+For each SDK, find all recipe paths that already have an example file.
+
+Most languages store examples as `example.{ext}` at the recipe root. Rust and Java use
+a nested source layout (`src/main.rs` and `src/main/java/Example.java` respectively), so
+those require an additional search pattern.
+
+Run the standard search for all languages:
 
 ```bash
 find "recipes/{slug}/" -name "example.*" ! -name "*_test*" ! -name "*.mod" 2>/dev/null | \
   sed "s|recipes/{slug}/||" | sed "s|/example.*||" | sort
 ```
+
+For `slug=rust`, also include recipes detected via `src/main.rs`:
+
+```bash
+find "recipes/rust/" -path "*/src/main.rs" 2>/dev/null | \
+  sed "s|recipes/rust/||" | sed "s|/src/main\.rs||" | sort
+```
+
+For `slug=java`, also include recipes detected via `src/main/java/Example.java`:
+
+```bash
+find "recipes/java/" -path "*/src/main/java/Example.java" 2>/dev/null | \
+  sed "s|recipes/java/||" | sed "s|/src/main/java/Example\.java||" | sort
+```
+
+Merge and deduplicate the results from both searches for the relevant language before
+comparing against features.json.
 
 Replace `{slug}` with the SDK's slug value.
 
