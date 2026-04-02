@@ -6,6 +6,7 @@
  */
 import resources.listen.v1.media.requests.ListenV1RequestUrl;
 import resources.listen.v1.media.types.MediaTranscribeRequestModel;
+import resources.listen.v1.media.types.MediaTranscribeRequestSummarize;
 import resources.listen.v1.media.types.MediaTranscribeResponse;
 import types.ListenV1Response;
 
@@ -20,7 +21,7 @@ public class Example {
             ListenV1RequestUrl.builder()
                 .url("https://dpgr.am/spacewalk.wav")
                 .model(MediaTranscribeRequestModel.NOVA3)
-                .summarize("v2")  // <-- THIS is the feature this recipe demonstrates
+                .summarize(MediaTranscribeRequestSummarize.V2)  // <-- THIS is the feature this recipe demonstrates
                 .smartFormat(true)
                 // Optional: topics(true), intents(true), sentiment(true)
                 .build());
