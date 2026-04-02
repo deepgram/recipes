@@ -8,8 +8,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import com.deepgram.DeepgramClient;
-import com.deepgram.resources.speak.v1.audio.requests.SpeakV1Request;
+import resources.speak.v1.audio.requests.SpeakV1Request;
+import resources.speak.v1.audio.types.AudioGenerateRequestEncoding;
+import resources.speak.v1.audio.types.AudioGenerateRequestModel;
 
 public class Example {
     public static void main(String[] args) throws Exception {
@@ -21,8 +22,8 @@ public class Example {
         InputStream audio = client.speak().v1().audio().generate(
             SpeakV1Request.builder()
                 .text("Hello from Deepgram! This audio uses a custom bit rate.")
-                .model("aura-2-thalia-en")
-                .encoding("mp3")
+                .model(AudioGenerateRequestModel.AURA2THALIA_EN)
+                .encoding(AudioGenerateRequestEncoding.MP3)
                 .bitRate(48000.0)  // <-- THIS sets the output bit rate (48 kbps)
                 .build());
 
