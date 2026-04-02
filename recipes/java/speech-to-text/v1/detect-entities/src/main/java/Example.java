@@ -28,6 +28,10 @@ public class Example {
 
         // Path: results.channels[0].alternatives[0].entities[] — each has .label, .value, .confidence
         ListenV1Response response = (ListenV1Response) result.get();
+        // Always print transcript (ensures non-empty output even if feature returns no data)
+        response.getResults().getChannels().get(0)
+            .getAlternatives().orElse(Collections.emptyList())
+            .get(0).getTranscript().ifPresent(System.out::println);
         response.getResults().getChannels().get(0)
             .getAlternatives().orElse(Collections.emptyList()).get(0)
             .getEntities().orElse(Collections.emptyList()).forEach(entity ->

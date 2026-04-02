@@ -26,8 +26,13 @@ public class Example {
                 // Optional: topics(true), sentiment(true), summarize("v2")
                 .build());
 
-        // Path: results.intents.results.intents.segments[].intents[] — each has .intent and .confidenceScore
+        // Print transcript first (always produces output regardless of intent detection)
         ListenV1Response response = (ListenV1Response) result.get();
+        response.getResults().getChannels().get(0)
+            .getAlternatives().orElse(Collections.emptyList())
+            .get(0).getTranscript().ifPresent(System.out::println);
+
+        // Path: results.intents.results.intents.segments[].intents[] — each has .intent and .confidenceScore
         response.getResults().getIntents().ifPresent(i ->
             i.getResults().ifPresent(r ->
                 r.getIntents().ifPresent(intentsObj ->
