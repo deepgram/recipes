@@ -1,0 +1,9 @@
+[package]
+name = "deepgram-rust-stt-v1-replace"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+deepgram.workspace = true
+tokio.workspace = true
+serde_json.workspace = true
