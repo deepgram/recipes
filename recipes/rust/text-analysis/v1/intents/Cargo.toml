@@ -1,0 +1,9 @@
+[package]
+name = "deepgram-rust-ta-v1-intents"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+tokio.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
