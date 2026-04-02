@@ -18,6 +18,7 @@ members = [
   "speech-to-text/v1/redact",
   "speech-to-text/v1/search",
   "speech-to-text/v1/keywords",
+  "speech-to-text/v1/keyterm",
   "speech-to-text/v1/streaming",
   "speech-to-text/v1/streaming-file",
   "speech-to-text/v2/transcribe-url",
