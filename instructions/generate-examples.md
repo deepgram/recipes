@@ -214,9 +214,16 @@ PR_URL=$(gh pr create \
   --body "Adds the **${SLUG}** recipe for ${PRODUCT} ${VERSION} (${language}).
 
 Closes part of #{issue_number}")
+
+# Bot-created PRs don't fire pull_request events (GitHub blocks workflow-to-workflow
+# propagation). Merge main into the branch to trigger the synchronize event and start CI.
+gh api repos/deepgram/recipes/merges \
+  -f base="$BRANCH" \
+  -f head="main" \
+  -f commit_message="chore: trigger CI" 2>/dev/null || true
 ```
 
-CI will run automatically. A human will review and merge.
+A human will review the CI results and merge.
 
 ### 5f — Return to main for the next recipe
 
