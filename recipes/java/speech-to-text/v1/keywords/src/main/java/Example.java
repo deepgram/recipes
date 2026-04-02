@@ -6,7 +6,6 @@
  * See also: search for finding specific terms with confidence scores
  */
 import java.util.Collections;
-import java.util.List;
 import resources.listen.v1.media.requests.ListenV1RequestUrl;
 import resources.listen.v1.media.types.MediaTranscribeRequestModel;
 import resources.listen.v1.media.types.MediaTranscribeResponse;
@@ -23,7 +22,7 @@ public class Example {
             ListenV1RequestUrl.builder()
                 .url("https://dpgr.am/spacewalk.wav")
                 .model(MediaTranscribeRequestModel.NOVA3)
-                .keywords(List.of("NASA", "spacewalk"))  // <-- THIS boosts keywords
+                .keywords("NASA")  // <-- THIS boosts keywords
                 .smartFormat(true)
                 // Optional: search(List.of("NASA"))
                 .build());
