@@ -204,7 +204,7 @@ git commit -m "feat({language}): ${PRODUCT} ${VERSION} — ${SLUG}"
 git push origin "$BRANCH"
 ```
 
-### 5e — Open PR with auto-merge
+### 5e — Open PR (no auto-merge — waits for human)
 
 ```bash
 PR_URL=$(gh pr create \
@@ -214,22 +214,9 @@ PR_URL=$(gh pr create \
   --body "Adds the **${SLUG}** recipe for ${PRODUCT} ${VERSION} (${language}).
 
 Closes part of #{issue_number}")
-
-gh pr merge "$PR_URL" --auto --squash
-
-# Bot PRs don't fire pull_request events — trigger E2E explicitly.
-# Retry up to 3 times with a short delay; the 15-min sweep catches
-# anything that still doesn't get triggered.
-sleep 3
-for attempt in 1 2 3; do
-  if gh workflow run lead-test.yml --repo deepgram/recipes --ref "$BRANCH"; then
-    echo "E2E triggered on $BRANCH (attempt $attempt)"
-    break
-  fi
-  echo "Attempt $attempt failed, retrying in 5s..."
-  sleep 5
-done
 ```
+
+CI will run automatically. A human will review and merge.
 
 ### 5f — Return to main for the next recipe
 
@@ -247,7 +234,7 @@ After all PRs are opened:
 
 ```bash
 gh issue close {issue_number} \
-  --comment "Opened {N} PRs — one per recipe. They will auto-merge as tests pass."
+  --comment "Opened {N} PRs — one per recipe. Waiting for human review and merge."
 ```
 
 ---
