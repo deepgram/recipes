@@ -133,8 +133,9 @@ jobs:
               echo "Updated existing PR #$EXISTING"
             fi
 
-            # Always re-trigger E2E (required check for merge)
-            gh workflow run lead-e2e.yml --ref "$BRANCH"
+            # Re-trigger the test workflow so the required check runs
+            # (lead-test.yml skips tests when no recipes/** changed, but still runs e2e-api-check)
+            gh workflow run lead-test.yml --ref "$BRANCH" || true
           else
             echo "README unchanged — nothing to do."
           fi
