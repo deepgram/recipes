@@ -22,6 +22,7 @@ public class Example {
             + "The item arrived damaged and I'm very disappointed with the quality. "
             + "Can you also update my shipping address for future orders?";
 
+        System.out.println("Analyzing: " + text.substring(0, Math.min(80, text.length())));
         ReadV1Response response = client.read().v1().text().analyze(
             TextAnalyzeRequest.builder()
                 .body(ReadV1Request.of(ReadV1RequestText.builder().text(text).build()))
