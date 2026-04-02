@@ -15,8 +15,9 @@ name: Lead — Test
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - 'recipes/**'
+    # No paths filter — every PR needs e2e-api-check to pass.
+    # detect scopes language tests to changed recipes only, so
+    # docs-only PRs just skip all language tests and run quickly.
   workflow_dispatch:
     inputs:
       ref:
