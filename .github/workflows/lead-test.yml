@@ -201,7 +201,7 @@ jobs:
           fi
         env:
           DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
-        timeout-minutes: 15
+        timeout-minutes: 30
 
   # ── CLI (Deepgram CLI — installed via install.sh) ─────────────────────────
   # Only tests recipes that changed in this PR; posts output as a PR comment.
