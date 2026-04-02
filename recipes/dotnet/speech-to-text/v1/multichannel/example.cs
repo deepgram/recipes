@@ -19,18 +19,26 @@ var client = ClientFactory.CreateListenRESTClient();
 // MultiChannel=true transcribes each audio track independently.
 // With stereo audio this gives separate transcripts per channel.
 // The demo file is mono, so channels[0] contains the full transcript.
-var response = await client.TranscribeUrl(
-    new UrlSource("https://dpgr.am/spacewalk.wav"),
-    new PreRecordedSchema()
-    {
-        Model = "nova-3",
-        SmartFormat = true,
-        // MultiChannel = true  // uncomment for stereo/multi-track files
-    });
+try
+{
+    var response = await client.TranscribeUrl(
+        new UrlSource("https://dpgr.am/spacewalk.wav"),
+        new PreRecordedSchema()
+        {
+            Model = "nova-3",
+            SmartFormat = true,
+            // MultiChannel = true  // uncomment for stereo/multi-track files
+        });
 
-// response.Results.Channels[i] holds each channel's transcript.
-// With MultiChannel=true you get one entry per audio track.
-Console.WriteLine($"Channels: {response.Results.Channels.Count}");
-Console.WriteLine(response.Results.Channels[0].Alternatives[0].Transcript);
+    // response.Results.Channels[i] holds each channel's transcript.
+    // With MultiChannel=true you get one entry per audio track.
+    Console.WriteLine($"Channels: {response.Results.Channels.Count}");
+    Console.WriteLine(response.Results.Channels[0].Alternatives[0].Transcript);
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine($"Error: {ex.GetType().Name}: {ex.Message}");
+    throw;
+}
 
 Library.Terminate();
