@@ -36,8 +36,10 @@ func main() {
 
 	if res.Results.Topics != nil {
 		for _, seg := range res.Results.Topics.Segments {
-			for _, t := range seg.Topics {
-				fmt.Printf("Topic: %s\n  Text: %s\n", t.Topic, seg.Text)
+			if seg.Topics != nil {
+				for _, t := range *seg.Topics {
+					fmt.Printf("Topic: %s\n  Text: %s\n", t.Topic, seg.Text)
+				}
 			}
 		}
 	} else {

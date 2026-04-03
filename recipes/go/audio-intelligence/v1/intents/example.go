@@ -35,8 +35,10 @@ func main() {
 
 	if res.Results.Intents != nil {
 		for _, seg := range res.Results.Intents.Segments {
-			for _, i := range seg.Intents {
-				fmt.Printf("Intent: %s\n  Text: %s\n", i.Intent, seg.Text)
+			if seg.Intents != nil {
+				for _, i := range *seg.Intents {
+					fmt.Printf("Intent: %s\n  Text: %s\n", i.Intent, seg.Text)
+				}
 			}
 		}
 	} else {

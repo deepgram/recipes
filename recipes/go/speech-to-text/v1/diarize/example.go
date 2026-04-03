@@ -35,12 +35,16 @@ func main() {
 		words := res.Results.Channels[0].Alternatives[0].Words
 		currentSpeaker := -1
 		for _, w := range words {
-			if w.Speaker != currentSpeaker {
+			speaker := -1
+			if w.Speaker != nil {
+				speaker = *w.Speaker
+			}
+			if speaker != currentSpeaker {
 				if currentSpeaker != -1 {
 					fmt.Println()
 				}
-				fmt.Printf("[Speaker %d] ", w.Speaker)
-				currentSpeaker = w.Speaker
+				fmt.Printf("[Speaker %d] ", speaker)
+				currentSpeaker = speaker
 			}
 			fmt.Printf("%s ", w.Word)
 		}
