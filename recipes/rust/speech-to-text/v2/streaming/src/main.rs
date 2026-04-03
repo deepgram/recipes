@@ -9,6 +9,7 @@ use futures::StreamExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let _ = rustls::crypto::ring::default_provider().install_default();
     let api_key = env::var("DEEPGRAM_API_KEY").expect("DEEPGRAM_API_KEY must be set");
     let dg = Deepgram::new(&api_key)?;
 

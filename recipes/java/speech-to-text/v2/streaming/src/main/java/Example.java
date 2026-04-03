@@ -7,6 +7,7 @@
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import okio.ByteString;
 import resources.listen.v2.types.ListenV2CloseStream;
 import resources.listen.v2.types.ListenV2CloseStreamType;
 import resources.listen.v2.websocket.V2ConnectOptions;
@@ -34,7 +35,7 @@ public class Example {
             .build()).get(10, TimeUnit.SECONDS);
 
         for (int i = 0; i < audio.length; i += 4096) {
-            ws.sendMedia(java.util.Arrays.copyOfRange(audio, i, Math.min(i + 4096, audio.length)));
+            ws.sendMedia(ByteString.of(java.util.Arrays.copyOfRange(audio, i, Math.min(i + 4096, audio.length))));
         }
         ws.sendCloseStream(ListenV2CloseStream.builder().type(ListenV2CloseStreamType.CLOSE_STREAM).build());
         done.await(30, TimeUnit.SECONDS);

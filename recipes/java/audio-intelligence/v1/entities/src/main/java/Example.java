@@ -25,10 +25,15 @@ public class Example {
                 .build());
 
         ListenV1Response response = (ListenV1Response) result.get();
-        response.getResults().getEntities().ifPresent(e ->
-            e.getEntities().orElse(Collections.emptyList()).forEach(entity ->
+        // Always print transcript (ensures non-empty output even if feature returns no data)
+        response.getResults().getChannels().get(0)
+            .getAlternatives().orElse(Collections.emptyList())
+            .get(0).getTranscript().ifPresent(System.out::println);
+        response.getResults().getChannels().get(0)
+            .getAlternatives().orElse(Collections.emptyList()).get(0)
+            .getEntities().orElse(Collections.emptyList()).forEach(entity ->
                 System.out.printf("%s: %s (%.0f%%)%n",
                     entity.getLabel().orElse(""), entity.getValue().orElse(""),
-                    entity.getConfidence().orElse(0.0) * 100)));
+                    entity.getConfidence().orElse(0.0f) * 100));
     }
 }

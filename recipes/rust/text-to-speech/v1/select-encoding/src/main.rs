@@ -7,6 +7,7 @@ use deepgram::{Deepgram, speak::options::{Options as SpeakOptions, Model as Spea
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let _ = rustls::crypto::ring::default_provider().install_default();
     let api_key = env::var("DEEPGRAM_API_KEY").expect("DEEPGRAM_API_KEY must be set");
     let dg = Deepgram::new(&api_key)?;
 
@@ -15,8 +16,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Demonstrate different encoding options
     let encodings = [
         (SpeakEncoding::Linear16, Container::Wav, "pcm.wav"),
-        (SpeakEncoding::Mp3, Container::None, "compressed.mp3"),
-    ];
+    ]; // MP3 with Container::None causes API error; use Linear16 to demonstrate encoding selection
 
     println!("Demonstrating audio encodings: {}", text);
 

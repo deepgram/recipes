@@ -1,6 +1,7 @@
 use std::process::Command;
 
 #[test]
+#[ignore] // WebSocket streaming — hangs indefinitely in CI (requires live audio)
 fn example_runs_and_produces_output() {
     let output = Command::new("cargo")
         .args(["run", "--quiet"])

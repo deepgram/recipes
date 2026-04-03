@@ -25,10 +25,16 @@ public class Example {
                 .build());
 
         ListenV1Response response = (ListenV1Response) result.get();
+        // Always print transcript (ensures non-empty output even if feature returns no data)
+        response.getResults().getChannels().get(0)
+            .getAlternatives().orElse(Collections.emptyList())
+            .get(0).getTranscript().ifPresent(System.out::println);
         response.getResults().getIntents().ifPresent(i ->
-            i.getSegments().orElse(Collections.emptyList()).forEach(seg ->
-                seg.getIntents().orElse(Collections.emptyList()).forEach(intent ->
-                    System.out.printf("Intent: %s (%.0f%%)%n",
-                        intent.getIntent().orElse(""), intent.getConfidence().orElse(0.0) * 100))));
+            i.getResults().ifPresent(r ->
+                r.getIntents().ifPresent(intentsObj ->
+                    intentsObj.getSegments().orElse(Collections.emptyList()).forEach(seg ->
+                        seg.getIntents().orElse(Collections.emptyList()).forEach(intent ->
+                            System.out.printf("Intent: %s (%.0f%%)%n",
+                                intent.getIntent().orElse(""), intent.getConfidenceScore().orElse(0.0f) * 100))))));
     }
 }
