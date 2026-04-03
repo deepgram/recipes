@@ -48,17 +48,17 @@ recipes/{language}/{product}/{version}/{recipe}/
 ## Recipes
 
 <!-- recipes-table-start -->
-*Last updated 2026-04-03 01:01 UTC*
+*Last updated 2026-04-03 06:53 UTC*
 
 | | Python | JavaScript | Go | .NET | Java | Rust | CLI |
 |---|---|---|---|---|---|---|---|
-| Speech-to-Text `v1` | ✅ | ✅ | ✅ | 20/26 | ✅ | 19/26 | ✅ |
+| Speech-to-Text `v1` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Speech-to-Text `v2` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 1/2 |
-| Text-to-Speech `v1` | ✅ | ✅ | ✅ | 5/6 | ✅ | 5/6 | ✅ |
+| Text-to-Speech `v1` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Audio Intelligence `v1` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Voice Agents `v1` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Text Analysis `v1` | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ |
-| **Total** | **47/47** | **47/47** | **47/47** | **36/47** | **47/47** | **35/47** | **46/47** |
+| Text Analysis `v1` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Total** | **47/47** | **47/47** | **47/47** | **47/47** | **47/47** | **47/47** | **46/47** |
 | **Tests** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 <!-- recipes-table-end -->
 

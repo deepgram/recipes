@@ -1,6 +1,6 @@
 # Rust Recipes
 
-35 recipe(s) available.
+47 recipe(s) available.
 
 
 ## Speech-to-Text `v1`
@@ -16,12 +16,19 @@
 - [detect-entities](speech-to-text/v1/detect-entities/)
 - [detect-language](speech-to-text/v1/detect-language/)
 - [diarize](speech-to-text/v1/diarize/)
+- [dictation](speech-to-text/v1/dictation/)
+- [filler-words](speech-to-text/v1/filler-words/)
 - [intents](speech-to-text/v1/intents/)
+- [keyterm](speech-to-text/v1/keyterm/)
 - [keywords](speech-to-text/v1/keywords/)
+- [measurements](speech-to-text/v1/measurements/)
 - [multichannel](speech-to-text/v1/multichannel/)
+- [numerals](speech-to-text/v1/numerals/)
 - [paragraphs](speech-to-text/v1/paragraphs/)
+- [profanity-filter](speech-to-text/v1/profanity-filter/)
 - [punctuate](speech-to-text/v1/punctuate/)
 - [redact](speech-to-text/v1/redact/)
+- [replace](speech-to-text/v1/replace/)
 - [search](speech-to-text/v1/search/)
 - [sentiment](speech-to-text/v1/sentiment/)
 - [smart-format](speech-to-text/v1/smart-format/)
@@ -40,6 +47,14 @@
 
 ## Speech-to-Text `v1`
 
+- [intents](text-analysis/v1/intents/)
+- [sentiment](text-analysis/v1/sentiment/)
+- [summarize](text-analysis/v1/summarize/)
+- [topics](text-analysis/v1/topics/)
+
+## Speech-to-Text `v1`
+
+- [bit-rate](text-to-speech/v1/bit-rate/)
 - [generate-audio](text-to-speech/v1/generate-audio/)
 - [select-encoding](text-to-speech/v1/select-encoding/)
 - [select-model](text-to-speech/v1/select-model/)
