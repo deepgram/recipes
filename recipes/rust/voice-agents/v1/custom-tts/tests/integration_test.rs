@@ -1,6 +1,7 @@
 use std::process::Command;
 
 #[test]
+#[ignore] // WebSocket voice agent — hangs indefinitely in CI (requires live session)
 fn example_runs_and_produces_output() {
     let output = Command::new("cargo")
         .args(["run", "--quiet"])
