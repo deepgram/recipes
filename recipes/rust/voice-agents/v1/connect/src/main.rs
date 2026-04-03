@@ -11,6 +11,7 @@ use serde_json::json;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let _ = rustls::crypto::ring::default_provider().install_default();
     let api_key = env::var("DEEPGRAM_API_KEY")?;
     // Connect to Deepgram Voice Agents endpoint  // <-- THIS is the feature this recipe demonstrates
     let url = format!("wss://agent.deepgram.com/agent?authorization=token%20{}", api_key);

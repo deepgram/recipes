@@ -7,3 +7,4 @@ edition.workspace = true
 deepgram.workspace = true
 tokio.workspace = true
 serde_json.workspace = true
+rustls = { version = "0.23", features = ["ring"] }
