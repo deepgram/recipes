@@ -36,7 +36,7 @@ members = [
   "voice-agents/v1/custom-llm",
   "voice-agents/v1/custom-tts",
   "voice-agents/v1/function-calling",
-  "speech-to-text/v1/profanity-filter",
+  "speech-to-text/v1/filler-words",
 ]
 
 [workspace.package]
@@ -49,4 +49,3 @@ serde_json = "1"
 futures = "0.3"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream", "json"] }
 tokio-tungstenite = { version = "0.24", features = ["rustls-tls-webpki-roots"] }
-
