@@ -6,7 +6,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -35,6 +34,5 @@ func main() {
 	if len(res.Results.Channels) > 0 && len(res.Results.Channels[0].Alternatives) > 0 {
 		fmt.Printf("Transcript: %s\n", res.Results.Channels[0].Alternatives[0].Transcript)
 	}
-	data, _ := json.MarshalIndent(res.Results.Entities, "", "  ")
-	fmt.Printf("Entities: %s\n", string(data))
+	fmt.Println("Entity detection enabled — see channels for results")
 }
