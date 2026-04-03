@@ -32,7 +32,7 @@ func main() {
 		log.Fatalf("TTS stream failed: %v", err)
 	}
 
-	fmt.Printf("Streamed audio: %d bytes\n", len(buf))
+	fmt.Printf("Streamed audio: %d bytes\n", buf.Len())
 	fmt.Printf("Content-Type: %s\n", res.ContextType)
 	fmt.Printf("Model: %s, Characters: %d\n", res.ModelName, res.Characters)
 }

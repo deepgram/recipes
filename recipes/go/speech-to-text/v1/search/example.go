@@ -35,8 +35,8 @@ func main() {
 		log.Fatalf("Transcription failed: %v", err)
 	}
 
-	if len(res.Results.Channels) > 0 {
-		for _, group := range res.Results.Channels[0].Search {
+	if len(res.Results.Channels) > 0 && res.Results.Channels[0].Search != nil {
+		for _, group := range *res.Results.Channels[0].Search {
 			fmt.Printf("Term: %s (%d hits)\n", group.Query, len(group.Hits))
 			for _, hit := range group.Hits {
 				fmt.Printf("  %.2fs-%.2fs confidence=%.3f\n", hit.Start, hit.End, hit.Confidence)
