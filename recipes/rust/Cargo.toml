@@ -18,7 +18,6 @@ members = [
   "speech-to-text/v1/redact",
   "speech-to-text/v1/search",
   "speech-to-text/v1/keywords",
-  "speech-to-text/v1/measurements",
   "speech-to-text/v1/streaming",
   "speech-to-text/v1/streaming-file",
   "speech-to-text/v2/transcribe-url",
@@ -37,6 +36,7 @@ members = [
   "voice-agents/v1/custom-llm",
   "voice-agents/v1/custom-tts",
   "voice-agents/v1/function-calling",
+  "speech-to-text/v1/filler-words",
 ]
 
 [workspace.package]
