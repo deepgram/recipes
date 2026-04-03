@@ -10,6 +10,7 @@ use serde_json::json;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let _ = rustls::crypto::ring::default_provider().install_default();
     let api_key = env::var("DEEPGRAM_API_KEY")?;
     let url = format!("wss://agent.deepgram.com/agent?authorization=token%20{}", api_key);
     let (ws_stream, _) = connect_async(&url).await?;
