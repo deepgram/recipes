@@ -48,7 +48,7 @@ recipes/{language}/{product}/{version}/{recipe}/
 ## Recipes
 
 <!-- recipes-table-start -->
-*Last updated 2026-04-03 18:48 UTC*
+*Last updated 2026-04-04 00:57 UTC*
 
 | | Python | JavaScript | Go | .NET | Java | Rust | CLI |
 |---|---|---|---|---|---|---|---|
