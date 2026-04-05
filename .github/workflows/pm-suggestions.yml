@@ -7,7 +7,7 @@ on:
       - reopened
       - labeled       # Re-process when devrel adds 'approved' to external issues
   schedule:
-    - cron: '47 * * * *'   # Hourly sweep to catch anything missed
+    - cron: '47 */6 * * *'  # Fallback sweep every 6h
   workflow_dispatch:
 
 concurrency:
@@ -33,6 +33,9 @@ jobs:
           git config user.email "noreply@deepgram.com"
 
       # ── Permission gate ──────────────────────────────────────────────────
+      # Write access = act immediately.
+      # No write access = hold for devrel approval; don't run PM agent.
+      # Schedule/dispatch runs bypass the check (no user context).
       - name: Check write permission
         id: permission
         env:
@@ -41,12 +44,14 @@ jobs:
           EVENT="${{ github.event_name }}"
           USERNAME="${{ github.event.issue.user.login }}"
 
+          # Schedule and dispatch runs always proceed
           if [[ "$EVENT" == "schedule" || "$EVENT" == "workflow_dispatch" ]]; then
             echo "gate=pass" >> $GITHUB_OUTPUT
             echo "reason=scheduled" >> $GITHUB_OUTPUT
             exit 0
           fi
 
+          # If the 'approved' label was just added, treat as approved regardless of opener
           LABEL="${{ github.event.label.name }}"
           if [[ "$EVENT" == "issues" && "$LABEL" == "approved" ]]; then
             echo "gate=pass" >> $GITHUB_OUTPUT
@@ -54,6 +59,7 @@ jobs:
             exit 0
           fi
 
+          # Check if the issue already has the 'approved' label (re-opened etc.)
           HAS_APPROVED=$(gh issue view ${{ github.event.issue.number }} \
             --repo ${{ github.repository }} \
             --json labels --jq '[.labels[].name] | contains(["approved"])' 2>/dev/null || echo "false")
@@ -63,22 +69,27 @@ jobs:
             exit 0
           fi
 
+          # Skip bots
           if [[ "$USERNAME" == *"[bot]"* ]]; then
             echo "gate=skip" >> $GITHUB_OUTPUT
             echo "reason=bot" >> $GITHUB_OUTPUT
             exit 0
           fi
 
+          # Check Deepgram org membership or repo write access
+          IS_ORG_MEMBER=false
+          if gh api "orgs/deepgram/members/${USERNAME}" -i 2>/dev/null | head -1 | grep -q "204"; then
+            IS_ORG_MEMBER=true
+          fi
           PERM=$(gh api "repos/${{ github.repository }}/collaborators/${USERNAME}/permission" \
             --jq '.permission' 2>/dev/null || echo "none")
-          echo "Permission for $USERNAME: $PERM"
 
-          if [[ "$PERM" == "write" || "$PERM" == "maintain" || "$PERM" == "admin" ]]; then
+          if [[ "$IS_ORG_MEMBER" == "true" || "$PERM" == "write" || "$PERM" == "maintain" || "$PERM" == "admin" ]]; then
             echo "gate=pass" >> $GITHUB_OUTPUT
-            echo "reason=has-write-access" >> $GITHUB_OUTPUT
+            echo "reason=deepgram-member-or-collaborator" >> $GITHUB_OUTPUT
           else
             echo "gate=hold" >> $GITHUB_OUTPUT
-            echo "reason=no-write-access" >> $GITHUB_OUTPUT
+            echo "reason=not-deepgram-member" >> $GITHUB_OUTPUT
             echo "username=$USERNAME" >> $GITHUB_OUTPUT
           fi
 
@@ -91,9 +102,11 @@ jobs:
           USERNAME="${{ steps.permission.outputs.username }}"
           ISSUE="${{ github.event.issue.number }}"
 
+          # Only post once — skip if already held
           ALREADY=$(gh issue view "$ISSUE" --repo ${{ github.repository }} \
             --json labels --jq '[.labels[].name] | contains(["needs:approval"])' 2>/dev/null || echo "false")
           if [[ "$ALREADY" == "true" ]]; then
+            echo "Already on hold — skipping duplicate comment"
             exit 0
           fi
 
@@ -109,9 +122,10 @@ jobs:
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           mode: agent
           model: claude-opus-4-6
-          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
+          allowed_tools: "Bash,Read,Glob,Grep,WebSearch,WebFetch"
           timeout_minutes: 15
           direct_prompt: |
             Read and execute instructions/pm-suggestions.md.

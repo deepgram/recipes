@@ -90,37 +90,37 @@ find recipes -type d -name "*{keyword}*" 2>/dev/null
 
 ### → New recipe request (doesn't exist, Deepgram supports it, priority ≥ 6/10)
 
-```bash
-gh issue edit {number} --add-label "type:suggestion,suggestion:accepted"
-gh issue comment {number} --body "Thanks for the suggestion! I've queued this.
+Label the original issue to queue it directly — do NOT create a separate queue issue:
 
-The Engineer will build a **{description}** recipe. Tracking in #{new_issue_number}."
+```bash
+gh issue edit {number} \
+  --add-label "type:queue,action:generate,priority:user"
 ```
 
-Add to `features.json` if appropriate, then create a queue issue:
+Then edit the issue body to append a metadata block (preserve the original body):
 ```bash
-gh issue create \
-  --title "Queue: {clear title}" \
-  --label "type:queue,action:generate" \
-  --body "## Missing recipes: {Language} — {Feature}
+# Append metadata to the existing issue body
+CURRENT_BODY=$(gh issue view {number} --json body --jq '.body')
+NEW_BODY="${CURRENT_BODY}
 
+---
 <!-- metadata
 language: {lang}
 sdk-version: latest
-reason: suggestion
+reason: user-suggestion
 -->
 
-### What to generate
-{Recipe paths to create}
+*Queued by PM — Engineer will pick this up as a priority:user recipe.*"
 
-### Origin
-Requested in #{number}: {brief quote}
-
----
-*Queued by PM from #{number}*"
-
-gh issue close {number} --comment "Queued in #{new_issue_number}."
+gh issue edit {number} --body "$NEW_BODY"
 ```
+
+Post a warm, enthusiastic comment:
+```bash
+gh issue comment {number} --body "Ooo, we'll get right on that! We'll build a **{description}** recipe for you. This has been queued for the Engineer — it'll get priority as a user request."
+```
+
+Add to `features.json` if the feature is not already represented there.
 
 ---
 

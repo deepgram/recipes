@@ -1,30 +1,35 @@
 name: Engineer
 
+# Builds new recipes from the queue, runs tests, and opens the PR.
+# The engineer does its own Kapa research — no separate researcher step needed.
+# Only opens a PR when tests pass (or documents what failed after one fix attempt).
+
 on:
-  schedule:
-    - cron: '27 * * * *'
   issues:
-    types:
-      - opened
-      - labeled
+    types: [labeled]         # Fires when action:generate or action:research is applied
+  schedule:
+    - cron: '27 */4 * * *'  # Fallback sweep every 4h (catches missed label events)
   workflow_dispatch:
     inputs:
       issue_number:
-        description: 'Queue issue number to process (optional)'
+        description: 'Queue issue number to build (optional)'
         required: false
-
-concurrency:
-  group: engineer
-  cancel-in-progress: false
 
 jobs:
   run:
+    if: >
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' &&
+       (contains(github.event.issue.labels.*.name, 'action:generate') ||
+        contains(github.event.issue.labels.*.name, 'action:research')))
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
       actions: write
       issues: write
+      statuses: write
       id-token: write
     steps:
       - uses: actions/checkout@v4
@@ -53,8 +58,32 @@ jobs:
           echo "cli=$(latest cli)"                      >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT | grep -E "^(python|js|go|java|rust|dotnet|cli)="
 
+      - name: Check actor is a team member
+        id: auth
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ACTOR="${{ github.actor }}"
+          if [[ "$ACTOR" == *"[bot]"* ]] || [[ "$ACTOR" == "github-actions" ]]; then
+            echo "allowed=true" >> $GITHUB_OUTPUT; exit 0
+          fi
+          IS_ORG_MEMBER=false
+          if gh api "orgs/deepgram/members/${ACTOR}" -i 2>/dev/null | head -1 | grep -q "204"; then
+            IS_ORG_MEMBER=true
+          fi
+          PERM=$(gh api "repos/${{ github.repository }}/collaborators/${ACTOR}/permission" \
+            --jq '.permission' 2>/dev/null || echo "none")
+          if [[ "$IS_ORG_MEMBER" == "true" || "$PERM" == "write" || "$PERM" == "maintain" || "$PERM" == "admin" ]]; then
+            echo "allowed=true" >> $GITHUB_OUTPUT
+          else
+            echo "allowed=false" >> $GITHUB_OUTPUT
+            echo "Actor $ACTOR not a Deepgram org member or repo collaborator — silently exiting"
+          fi
+
       - name: Check back pressure
         id: backpressure
+        if: steps.auth.outputs.allowed != 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -71,16 +100,16 @@ jobs:
             echo "✓ Pipeline has capacity ($READY/5 slots used)"
           fi
 
-      - name: Run instruction
-        if: steps.backpressure.outputs.blocked != 'true'
+      - name: Build, test, and open PR
+        if: steps.auth.outputs.allowed != 'false' && steps.backpressure.outputs.blocked != 'true'
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           mode: agent
           model: claude-opus-4-6
-          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
-          timeout_minutes: 45
+          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
+          timeout_minutes: 60
           direct_prompt: |
             Read and execute instructions/engineer.md.
 
@@ -90,6 +119,14 @@ jobs:
             - Trigger: ${{ github.event_name }}
             - Issue number (if triggered by issue): ${{ github.event.issue.number }}
             - Manual issue override: ${{ inputs.issue_number }}
+
+            PRIORITY: If multiple queue issues are open, prefer issues labelled
+            `priority:user` (submitted by real users) over bot-queued issues.
+
+            ISSUE HANDLING:
+            - Issues labelled `action:research`: do Kapa research first to understand
+              the feature and available SDK patterns, then build the recipe.
+            - Issues labelled `action:generate`: build the recipe directly.
 
             REQUIRED — use EXACTLY these Deepgram SDK versions, no older:
             - Python:     deepgram-sdk==${{ steps.sdk.outputs.python }}  (requirements.txt)
@@ -104,3 +141,4 @@ jobs:
         env:
           KAPA_API_KEY: ${{ secrets.KAPA_API_KEY }}
           KAPA_PROJECT_ID: ${{ vars.KAPA_PROJECT_ID }}
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
