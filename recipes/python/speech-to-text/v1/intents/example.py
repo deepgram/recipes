@@ -30,7 +30,7 @@ def main():
         #   custom_intent_mode="extended" (detect custom + auto intents)
     )
 
-    # Response path: response.results.intents.results.intents — intent analysis
+    # Response path: response.results.intents — intent analysis
     #   intents.segments        — list of segment objects
     #     segment.text          — the text segment
     #     segment.start_word    — start word index
@@ -40,7 +40,7 @@ def main():
     #       intent.confidence_score  — confidence (float)
     # Intents can be None if audio is too short for analysis.
     if response.results and response.results.intents:
-        segments = response.results.intents.results.intents.segments
+        segments = response.results.intents.segments
         if segments:
             for seg in segments[:5]:
                 intent_labels = [f"{i.intent} ({i.confidence_score:.2f})"
