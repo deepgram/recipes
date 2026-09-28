@@ -32,13 +32,11 @@ public class Example {
             .getAlternatives().orElse(Collections.emptyList())
             .get(0).getTranscript().ifPresent(System.out::println);
 
-        // Path: results.intents.results.intents.segments[].intents[] — each has .intent and .confidenceScore
-        response.getResults().getIntents().ifPresent(i ->
-            i.getResults().ifPresent(r ->
-                r.getIntents().ifPresent(intentsObj ->
-                    intentsObj.getSegments().orElse(Collections.emptyList()).forEach(seg ->
-                        seg.getIntents().orElse(Collections.emptyList()).forEach(intent ->
-                            System.out.printf("Intent: %s (%.0f%%)%n",
-                                intent.getIntent().orElse(""), intent.getConfidenceScore().orElse(0.0f) * 100))))));
+        // Path: results.intents.segments[].intents[] — each has .intent and .confidenceScore
+        response.getResults().getIntents().ifPresent(intents ->
+            intents.getSegments().orElse(Collections.emptyList()).forEach(seg ->
+                seg.getIntents().orElse(Collections.emptyList()).forEach(intent ->
+                    System.out.printf("Intent: %s (%.0f%%)%n",
+                        intent.getIntent().orElse(""), intent.getConfidenceScore().orElse(0.0f) * 100))));
     }
 }

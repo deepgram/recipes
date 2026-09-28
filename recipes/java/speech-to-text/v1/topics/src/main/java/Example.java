@@ -26,18 +26,16 @@ public class Example {
                 // Optional: intents(true), sentiment(true), summarize("v2")
                 .build());
 
-        // Path: results.topics.results.topics.segments[].topics[] — each has .topic and .confidenceScore
+        // Path: results.topics.segments[].topics[] — each has .topic and .confidenceScore
         ListenV1Response response = (ListenV1Response) result.get();
         // Always print transcript (ensures non-empty output even if feature returns no data)
         response.getResults().getChannels().get(0)
             .getAlternatives().orElse(Collections.emptyList())
             .get(0).getTranscript().ifPresent(System.out::println);
-        response.getResults().getTopics().ifPresent(t ->
-            t.getResults().ifPresent(r ->
-                r.getTopics().ifPresent(topicsObj ->
-                    topicsObj.getSegments().orElse(Collections.emptyList()).forEach(seg ->
-                        seg.getTopics().orElse(Collections.emptyList()).forEach(topic ->
-                            System.out.printf("Topic: %s (%.0f%%)%n",
-                                topic.getTopic().orElse(""), topic.getConfidenceScore().orElse(0.0f) * 100))))));
+        response.getResults().getTopics().ifPresent(topics ->
+            topics.getSegments().orElse(Collections.emptyList()).forEach(seg ->
+                seg.getTopics().orElse(Collections.emptyList()).forEach(topic ->
+                    System.out.printf("Topic: %s (%.0f%%)%n",
+                        topic.getTopic().orElse(""), topic.getConfidenceScore().orElse(0.0f) * 100))));
     }
 }
