@@ -1,0 +1,4 @@
+deepgram-sdk==7.19.0
+deepgram-sagemaker>=0.4.0
+pytest>=8.0.0
+pytest-timeout>=2.0.0
